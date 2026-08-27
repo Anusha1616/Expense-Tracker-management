@@ -15,6 +15,14 @@ import Settings from "./components/Settings";
 import RecentTransactions from "./components/RecentTransactions";
 import TopCategories from "./components/TopCategories";
 import ReportSummary from "./components/ReportSummary";
+import DashboardSummary from "./components/DashboardSummary";
+import Login from "./components/Login";
+import PaymentMethodChart from "./components/PaymentMethodChart";
+import Profile from "./components/Profile";
+import Security from "./components/Security";
+import ExportPDF from "./components/ExportPDF";
+import BudgetAlert from "./components/BudgetAlert";
+
 
 
 function App() {
@@ -27,12 +35,51 @@ function App() {
 
 
   // =========================
+  // LOGIN
+  // =========================
+
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+
+    return localStorage.getItem("loggedIn") === "true";
+
+  });
+
+
+  const handleLogin = () => {
+
+    setIsLoggedIn(true);
+
+    setPage("dashboard");
+
+  };
+
+
+  const handleLogout = () => {
+
+    const confirmLogout = window.confirm(
+      "Are you sure you want to logout?"
+    );
+
+    if (!confirmLogout) {
+      return;
+    }
+
+    localStorage.removeItem("loggedIn");
+
+    setIsLoggedIn(false);
+
+  };
+
+
+
+  // =========================
   // THEME
   // =========================
 
   const [theme, setTheme] = useState(() => {
 
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme =
+      localStorage.getItem("theme");
 
     return savedTheme || "light";
 
@@ -41,9 +88,13 @@ function App() {
 
   useEffect(() => {
 
-    localStorage.setItem("theme", theme);
+    localStorage.setItem(
+      "theme",
+      theme
+    );
 
   }, [theme]);
+
 
 
   // =========================
@@ -59,11 +110,22 @@ function App() {
       ? JSON.parse(savedExpenses)
       : [];
 
-  }); 
+  });
 
-  const [selectedMonth, setSelectedMonth] = useState("All");
 
-  // Save expenses to localStorage
+
+  // =========================
+  // TRANSACTION MONTH
+  // =========================
+
+  const [selectedMonth, setSelectedMonth] =
+    useState("All");
+
+
+
+  // =========================
+  // SAVE EXPENSES
+  // =========================
 
   useEffect(() => {
 
@@ -75,26 +137,33 @@ function App() {
   }, [expenses]);
 
 
+
   // =========================
   // DELETE ONE TRANSACTION
   // =========================
 
   const deleteExpense = (index) => {
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this transaction?"
-    );
+    const confirmDelete =
+      window.confirm(
+        "Are you sure you want to delete this transaction?"
+      );
 
     if (!confirmDelete) {
       return;
     }
 
+
     const updatedExpenses =
-      expenses.filter((_, i) => i !== index);
+      expenses.filter(
+        (_, i) => i !== index
+      );
+
 
     setExpenses(updatedExpenses);
 
   };
+
 
 
   // =========================
@@ -103,28 +172,33 @@ function App() {
 
   const clearAllExpenses = () => {
 
-    const confirmClear = window.confirm(
-      "Are you sure you want to delete ALL transactions?"
-    );
+    const confirmClear =
+      window.confirm(
+        "Are you sure you want to delete ALL transactions?"
+      );
 
     if (!confirmClear) {
       return;
     }
+
 
     setExpenses([]);
 
   };
 
 
+
   // =========================
-  // EXPORT TRANSACTIONS
+  // EXPORT CSV
   // =========================
 
   const exportExpenses = () => {
 
     if (expenses.length === 0) {
 
-      alert("No transactions to export.");
+      alert(
+        "No transactions to export."
+      );
 
       return;
 
@@ -132,33 +206,54 @@ function App() {
 
 
     const headers = [
+
       "Name",
+
       "Amount",
+
       "Type",
+
       "Category",
+
+      "Payment Method",
+
       "Date"
+
     ];
 
 
-    const rows = expenses.map((expense) => [
+    const rows =
+      expenses.map(
+        (expense) => [
 
-      expense.name,
-      expense.amount,
-      expense.type,
-      expense.category || "",
-      expense.date
+          expense.name,
 
-    ]);
+          expense.amount,
+
+          expense.type,
+
+          expense.category || "",
+
+          expense.paymentMethod || "Cash",
+
+          expense.date
+
+        ]
+      );
 
 
     const csvContent = [
 
       headers.join(","),
 
-      ...rows.map((row) =>
-        row
-          .map((value) => `"${value}"`)
-          .join(",")
+      ...rows.map(
+        (row) =>
+          row
+            .map(
+              (value) =>
+                `"${value}"`
+            )
+            .join(",")
       )
 
     ].join("\n");
@@ -169,7 +264,8 @@ function App() {
       [csvContent],
 
       {
-        type: "text/csv;charset=utf-8;"
+        type:
+          "text/csv;charset=utf-8;"
       }
 
     );
@@ -185,6 +281,7 @@ function App() {
 
     link.href = url;
 
+
     link.download =
       "expense-transactions.csv";
 
@@ -197,45 +294,54 @@ function App() {
   };
 
 
+
   // =========================
   // EDIT TRANSACTION
   // =========================
 
   const editExpense = (index) => {
 
-    const current = expenses[index];
+    const current =
+      expenses[index];
 
 
     // NAME
 
-    const name = prompt(
-      "Enter transaction name",
-      current.name
-    );
+    const name =
+      prompt(
+        "Enter transaction name",
+        current.name
+      );
+
 
     if (!name) {
       return;
     }
 
 
+
     // AMOUNT
 
-    const amount = prompt(
-      "Enter amount",
-      current.amount
-    );
+    const amount =
+      prompt(
+        "Enter amount",
+        current.amount
+      );
+
 
     if (!amount) {
       return;
     }
 
 
+
     // TYPE
 
-    const type = prompt(
-      "Enter type: Income or Expense",
-      current.type
-    );
+    const type =
+      prompt(
+        "Enter type: Income or Expense",
+        current.type
+      );
 
 
     if (
@@ -252,41 +358,68 @@ function App() {
     }
 
 
+
     // CATEGORY
 
-    let category = current.category;
+    let category =
+      current.category;
 
 
     if (type === "Expense") {
 
-      category = prompt(
-        "Enter category",
-        current.category || "Food"
-      );
+      category =
+        prompt(
+          "Enter category",
+          current.category ||
+          "Food"
+        );
 
 
       if (!category) {
         return;
       }
 
-    } else {
+    }
+    else {
 
       category = "";
 
     }
 
 
+
     // DATE
 
-    const date = prompt(
-      "Enter date (YYYY-MM-DD)",
-      current.date
-    );
+    const date =
+      prompt(
+        "Enter date (YYYY-MM-DD)",
+        current.date
+      );
 
 
     if (!date) {
       return;
     }
+
+
+
+    // PAYMENT METHOD
+
+    const paymentMethod =
+      prompt(
+
+        "Enter payment method: Cash, UPI, Debit Card, Credit Card or Bank Transfer",
+
+        current.paymentMethod ||
+        "Cash"
+
+      );
+
+
+    if (!paymentMethod) {
+      return;
+    }
+
 
 
     // UPDATE
@@ -307,23 +440,65 @@ function App() {
 
       category: category,
 
-      date: date
+      date: date,
+
+      paymentMethod:
+        paymentMethod
 
     };
 
 
-    setExpenses(updatedExpenses);
+    setExpenses(
+      updatedExpenses
+    );
 
   };
 
 
+
   // =========================
-  // RETURN
+  // REPORT FILTER
+  // =========================
+
+  const reportExpenses =
+    selectedMonth === "All"
+
+      ? expenses
+
+      : expenses.filter(
+          (expense) =>
+            expense.date?.startsWith(
+              selectedMonth
+            )
+        );
+
+
+
+  // =========================
+  // LOGIN PAGE
+  // =========================
+
+  if (!isLoggedIn) {
+
+    return (
+      <Login
+        onLogin={handleLogin}
+      />
+    );
+
+  }
+
+
+
+  // =========================
+  // MAIN RETURN
   // =========================
 
   return (
 
-    <div className={`app ${theme}`}>
+    <div
+      className={`app ${theme}`}
+    >
 
 
       {/* =========================
@@ -333,6 +508,7 @@ function App() {
       <Sidebar
         setPage={setPage}
       />
+
 
 
       <div className="container">
@@ -345,6 +521,7 @@ function App() {
         <Header />
 
 
+
         {/* =========================
             DASHBOARD
         ========================= */}
@@ -353,22 +530,29 @@ function App() {
 
           <>
 
+            <DashboardSummary
+              expenses={expenses}
+            />
+
+             <BudgetAlert
+      expenses={expenses}
+    />
+
+
             <Balance
               expenses={expenses}
             />
 
 
             <RecentTransactions
-
               expenses={expenses}
-
               setPage={setPage}
-
             />
 
           </>
 
         )}
+
 
 
         {/* =========================
@@ -385,15 +569,19 @@ function App() {
             </h2>
 
 
+
             {/* ADD EXPENSE / INCOME */}
 
             <AddExpenseForm
 
               expenses={expenses}
 
-              setExpenses={setExpenses}
+              setExpenses={
+                setExpenses
+              }
 
             />
+
 
 
             {/* TRANSACTION LIST */}
@@ -402,16 +590,24 @@ function App() {
 
               expenses={expenses}
 
-              deleteExpense={deleteExpense}
+              deleteExpense={
+                deleteExpense
+              }
 
-              editExpense={editExpense}
+              editExpense={
+                editExpense
+              }
 
-              selectedMonth={selectedMonth}
+              selectedMonth={
+                selectedMonth
+              }
 
-              setSelectedMonth={setSelectedMonth}
+              setSelectedMonth={
+                setSelectedMonth
+              }
 
+            />
 
-            />        
 
 
             {/* DELETE ALL */}
@@ -420,7 +616,9 @@ function App() {
 
               className="clear-all-btn"
 
-              onClick={clearAllExpenses}
+              onClick={
+                clearAllExpenses
+              }
 
             >
 
@@ -429,13 +627,16 @@ function App() {
             </button>
 
 
-            {/* EXPORT */}
+
+            {/* EXPORT CSV */}
 
             <button
 
               className="export-btn"
 
-              onClick={exportExpenses}
+              onClick={
+                exportExpenses
+              }
 
             >
 
@@ -449,78 +650,212 @@ function App() {
         )}
 
 
+{/* =========================
+    REPORTS
+========================= */}
+
+{page === "reports" && (
+
+  <div className="reports-page">
+
+    {/* TITLE */}
+
+    <h2>
+      📊 Reports & Charts
+    </h2>
+
+
+    {/* =========================
+        REPORT MONTH FILTER
+    ========================= */}
+
+    <div className="report-month-filter">
+
+      <label>
+        📅 Select Month:
+      </label>
+
+      <select
+        value={selectedMonth}
+        onChange={(e) =>
+          setSelectedMonth(e.target.value)
+        }
+      >
+
+        <option value="All">
+          All Months
+        </option>
+
+        <option value="2026-01">
+          January 2026
+        </option>
+
+        <option value="2026-02">
+          February 2026
+        </option>
+
+        <option value="2026-03">
+          March 2026
+        </option>
+
+        <option value="2026-04">
+          April 2026
+        </option>
+
+        <option value="2026-05">
+          May 2026
+        </option>
+
+        <option value="2026-06">
+          June 2026
+        </option>
+
+        <option value="2026-07">
+          July 2026
+        </option>
+
+        <option value="2026-08">
+          August 2026
+        </option>
+
+        <option value="2026-09">
+          September 2026
+        </option>
+
+        <option value="2026-10">
+          October 2026
+        </option>
+
+        <option value="2026-11">
+          November 2026
+        </option>
+
+        <option value="2026-12">
+          December 2026
+        </option>
+
+      </select>
+
+    </div>
+
+
+    {/* =========================
+        REPORT SUMMARY
+    ========================= */}
+
+    <ReportSummary
+      expenses={reportExpenses}
+    />
+
+
+    {/* =========================
+        EXPORT PDF
+    ========================= */}
+
+    <ExportPDF
+      expenses={reportExpenses}
+    />
+
+
+    {/* =========================
+        TOP CATEGORIES
+    ========================= */}
+
+    <TopCategories
+      expenses={reportExpenses}
+    />
+
+
+    {/* =========================
+        PAYMENT METHODS
+    ========================= */}
+
+    <PaymentMethodChart
+      expenses={reportExpenses}
+    />
+
+
+    {/* =========================
+        INCOME VS EXPENSE
+    ========================= */}
+
+    <ExpenseChart
+      expenses={reportExpenses}
+    />
+
+
+    {/* =========================
+        CATEGORY CHART
+    ========================= */}
+
+    <CategoryChart
+      expenses={reportExpenses}
+    />
+
+
+    {/* =========================
+        MONTHLY CHART
+    ========================= */}
+
+    <MonthlyChart
+      expenses={reportExpenses}
+    />
+
+  </div>
+
+)}
+
+{/* =========================
+    BUDGET
+========================= */}
+
+{page === "budget" && (
+  <Budget
+    expenses={expenses}
+  />
+)}
+
         {/* =========================
-            REPORTS
-        ========================= */}
+    PROFILE
+========================= */}
 
-        {page === "reports" && (
+{page === "profile" && (
 
-          <div className="reports-page">
+  <Profile
+    setPage={setPage}
+  />
 
-
-            <h2>
-              📊 Reports & Charts
-            </h2>
-
-
-            <ReportSummary
-              expenses={expenses}
-            />
+)}
 
 
-            <TopCategories
-              expenses={expenses}
-            />
+{/* =========================
+    SECURITY
+========================= */}
 
+{page === "security" && (
 
-            <ExpenseChart
-              expenses={expenses}
-            />
+  <Security
+    setPage={setPage}
+    onLogout={handleLogout}
+  />
 
+)}
 
-            <CategoryChart
-              expenses={expenses}
-            />
-
-
-            <MonthlyChart
-              expenses={expenses}
-            />
-
-
-          </div>
-
-        )}
-
-
-        {/* =========================
-            BUDGET
-        ========================= */}
-
-        {page === "budget" && (
-
-          <Budget
-            expenses={expenses}
-          />
-
-        )}
 
 
         {/* =========================
             SETTINGS
         ========================= */}
 
-        {page === "settings" && (
-
-          <Settings
-
-            setTheme={setTheme}
-
-            setExpenses={setExpenses}
-
-          />
-
-        )}
+       {page === "settings" && (
+  <Settings
+    setTheme={setTheme}
+    setExpenses={setExpenses}
+    setPage={setPage}
+    onLogout={handleLogout}
+    expenses={expenses}
+  />
+)}
 
 
         {/* =========================
@@ -531,6 +866,7 @@ function App() {
 
 
       </div>
+
 
     </div>
 

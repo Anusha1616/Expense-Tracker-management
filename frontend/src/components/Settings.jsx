@@ -1,16 +1,39 @@
-function Settings({ setTheme, setExpenses }) {
+import BackupRestore from "./BackupRestore";
 
-  // Change theme
+function Settings({
+  setTheme,
+  setExpenses,
+  setPage,
+  onLogout,
+  expenses
+}) {
+
+  // =========================
+  // LOGOUT
+  // =========================
+
+  const logout = () => {
+    onLogout();
+  };
+
+
+  // =========================
+  // CHANGE THEME
+  // =========================
+
   const changeTheme = (theme) => {
     setTheme(theme);
   };
 
 
-  // Clear transactions
+  // =========================
+  // CLEAR ALL TRANSACTIONS
+  // =========================
+
   const clearTransactions = () => {
 
     const confirmClear = window.confirm(
-      "Are you sure you want to delete all transactions?"
+      "Are you sure you want to delete ALL transactions?"
     );
 
     if (!confirmClear) {
@@ -20,25 +43,57 @@ function Settings({ setTheme, setExpenses }) {
     setExpenses([]);
 
     localStorage.removeItem("expenses");
+
+    alert("All transactions have been deleted.");
   };
 
 
-  // Clear budget
+  // =========================
+  // CLEAR ALL BUDGETS
+  // =========================
+
   const clearBudget = () => {
 
     const confirmClear = window.confirm(
-      "Are you sure you want to delete your saved budget?"
+      "Are you sure you want to delete ALL saved budgets?"
     );
 
     if (!confirmClear) {
       return;
     }
 
-    localStorage.removeItem("monthlyBudget");
+    localStorage.removeItem("monthlyBudgets");
 
-    alert("Budget removed. Refresh the page to update.");
+    alert("All saved budgets have been removed.");
   };
 
+
+  // =========================
+  // RESET ALL DATA
+  // =========================
+
+  const resetAllData = () => {
+
+    const confirmReset = window.confirm(
+      "WARNING!\n\nThis will delete all transactions and all budgets.\n\nAre you sure?"
+    );
+
+    if (!confirmReset) {
+      return;
+    }
+
+    setExpenses([]);
+
+    localStorage.removeItem("expenses");
+    localStorage.removeItem("monthlyBudgets");
+
+    alert("All expense tracker data has been reset.");
+  };
+
+
+  // =========================
+  // RETURN
+  // =========================
 
   return (
 
@@ -47,7 +102,9 @@ function Settings({ setTheme, setExpenses }) {
       <h2>⚙️ Settings</h2>
 
 
-      {/* Appearance */}
+      {/* =========================
+          APPEARANCE
+      ========================= */}
 
       <div className="settings-card">
 
@@ -57,7 +114,6 @@ function Settings({ setTheme, setExpenses }) {
           Choose how your expense tracker looks.
         </p>
 
-
         <div className="theme-buttons">
 
           <button
@@ -65,7 +121,6 @@ function Settings({ setTheme, setExpenses }) {
           >
             ☀️ Light Mode
           </button>
-
 
           <button
             onClick={() => changeTheme("dark")}
@@ -78,16 +133,17 @@ function Settings({ setTheme, setExpenses }) {
       </div>
 
 
-      {/* Data */}
+      {/* =========================
+          DATA MANAGEMENT
+      ========================= */}
 
       <div className="settings-card">
 
         <h3>💾 Data Management</h3>
 
         <p>
-          Manage your saved transactions and budget.
+          Manage your saved transactions and budgets.
         </p>
-
 
         <button
           className="clear-button"
@@ -96,18 +152,75 @@ function Settings({ setTheme, setExpenses }) {
           🗑️ Clear All Transactions
         </button>
 
-
         <button
           className="clear-budget-button"
           onClick={clearBudget}
         >
-          💰 Clear Saved Budget
+          💰 Clear Saved Budgets
+        </button>
+
+        <button
+          className="reset-button"
+          onClick={resetAllData}
+        >
+          ⚠️ Reset All Data
         </button>
 
       </div>
 
 
-      {/* Information */}
+      {/* =========================
+          BACKUP & RESTORE
+      ========================= */}
+
+      <div className="settings-card">
+
+        <BackupRestore
+          expenses={expenses}
+          setExpenses={setExpenses}
+          setPage={setPage}
+        />
+
+      </div>
+
+
+      {/* =========================
+          ACCOUNT
+      ========================= */}
+
+      <div className="settings-card">
+
+        <h3>👤 Account</h3>
+
+        <p>
+          Manage your account and security.
+        </p>
+
+        <button
+          onClick={() => setPage("profile")}
+        >
+          👤 Profile
+        </button>
+
+        <button
+          onClick={() => setPage("security")}
+        >
+          🔐 Security
+        </button>
+
+        <button
+          className="logout-button"
+          onClick={logout}
+        >
+          🚪 Logout
+        </button>
+
+      </div>
+
+
+      {/* =========================
+          INFORMATION
+      ========================= */}
 
       <div className="settings-card">
 
@@ -119,7 +232,11 @@ function Settings({ setTheme, setExpenses }) {
 
         <p>
           Manage your income, expenses,
-          budget and spending reports.
+          budgets and spending reports.
+        </p>
+
+        <p>
+          Version 1.0
         </p>
 
       </div>

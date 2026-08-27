@@ -1,176 +1,502 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-function Budget({ expenses }) {
+function Budget({ expenses = [] }) {
 
-  // Current month
-  const currentMonth = new Date()
-    .toISOString()
-    .slice(0, 7);
+  // =========================================
+  // SELECTED MONTH
+  // =========================================
+
+  const getCurrentMonth = () => {
+    const now = new Date();
+
+    return `${now.getFullYear()}-${String(
+      now.getMonth() + 1
+    ).padStart(2, "0")}`;
+  };
 
   const [selectedMonth, setSelectedMonth] =
-    useState(currentMonth);
+    useState(getCurrentMonth());
 
-  // Budget amount
-  const [budget, setBudget] = useState(() => {
-    const savedBudget =
-      localStorage.getItem("monthlyBudget");
 
-    return savedBudget
-      ? Number(savedBudget)
-      : 0;
+  // =========================================
+  // BUDGETS
+  // =========================================
+
+  const [budgets, setBudgets] = useState(() => {
+
+    try {
+
+      const saved =
+        localStorage.getItem("monthlyBudgets");
+
+      return saved
+        ? JSON.parse(saved)
+        : {};
+
+    } catch (error) {
+
+      console.error(
+        "Error loading budgets:",
+        error
+      );
+
+      return {};
+
+    }
+
   });
 
-  const [inputBudget, setInputBudget] = useState("");
 
-  // Save budget
+  // =========================================
+  // BUDGET INPUT
+  // =========================================
+
+  const [budgetAmount, setBudgetAmount] =
+    useState("");
+
+
+  // =========================================
+  // SAVE BUDGETS
+  // =========================================
+
   useEffect(() => {
+
     localStorage.setItem(
-      "monthlyBudget",
-      budget
+      "monthlyBudgets",
+      JSON.stringify(budgets)
     );
-  }, [budget]);
 
-  // Only expenses from selected month
-  const monthlyExpenses = expenses.filter(
-    (item) =>
-      item.type === "Expense" &&
-      item.date &&
-      item.date.startsWith(selectedMonth)
-  );
+  }, [budgets]);
 
-  // Calculate monthly expense
-  const totalExpense = monthlyExpenses.reduce(
-    (total, item) =>
-      total + Number(item.amount),
-    0
-  );
 
-  // Remaining budget
-  const remaining = budget - totalExpense;
+  // =========================================
+  // MONTH NAME
+  // =========================================
 
-  // Percentage used
+  const formatMonth = (month) => {
+
+    const [year, monthNumber] =
+      month.split("-");
+
+    const date = new Date(
+      Number(year),
+      Number(monthNumber) - 1,
+      1
+    );
+
+    return date.toLocaleString(
+      "en-US",
+      {
+        month: "long",
+        year: "numeric"
+      }
+    );
+
+  };
+
+
+  // =========================================
+  // SELECTED MONTH EXPENSES
+  // =========================================
+
+  const monthExpenses = useMemo(() => {
+
+    return expenses.filter((expense) => {
+
+      if (!expense.date) {
+        return false;
+      }
+
+      return expense.date.startsWith(
+        selectedMonth
+      );
+
+    });
+
+  }, [expenses, selectedMonth]);
+
+
+  // =========================================
+  // TOTAL EXPENSE
+  // =========================================
+
+  const spent = useMemo(() => {
+
+    return monthExpenses
+      .filter(
+        (expense) =>
+          expense.type === "Expense"
+      )
+      .reduce(
+        (total, expense) =>
+          total +
+          Number(expense.amount || 0),
+        0
+      );
+
+  }, [monthExpenses]);
+
+
+  // =========================================
+  // CURRENT BUDGET
+  // =========================================
+
+  const currentBudget =
+    Number(budgets[selectedMonth] || 0);
+
+
+  // =========================================
+  // REMAINING
+  // =========================================
+
+  const remaining =
+    currentBudget - spent;
+
+
+  // =========================================
+  // BUDGET USED %
+  // =========================================
+
   const percentage =
-    budget > 0
-      ? (totalExpense / budget) * 100
+    currentBudget > 0
+      ? Math.min(
+          (spent / currentBudget) * 100,
+          100
+        )
       : 0;
 
-  const progress = Math.min(percentage, 100);
 
-  // Set budget
-  const handleBudget = () => {
+  // =========================================
+  // SET / UPDATE BUDGET
+  // =========================================
+
+  const handleSetBudget = () => {
+
+    const amount =
+      Number(budgetAmount);
 
     if (
-      inputBudget === "" ||
-      Number(inputBudget) <= 0
+      !budgetAmount ||
+      Number.isNaN(amount) ||
+      amount <= 0
     ) {
-      alert("Please enter a valid budget");
+
+      alert(
+        "Please enter a valid budget amount."
+      );
+
+      return;
+
+    }
+
+
+    setBudgets((previous) => ({
+
+      ...previous,
+
+      [selectedMonth]: amount
+
+    }));
+
+
+    setBudgetAmount("");
+
+
+    alert(
+      `Budget set for ${formatMonth(
+        selectedMonth
+      )}`
+    );
+
+  };
+
+
+  // =========================================
+  // DELETE BUDGET
+  // =========================================
+
+  const deleteBudget = (month) => {
+
+    const confirmDelete =
+      window.confirm(
+        `Delete budget for ${formatMonth(
+          month
+        )}?`
+      );
+
+    if (!confirmDelete) {
       return;
     }
 
-    setBudget(Number(inputBudget));
-    setInputBudget("");
+
+    setBudgets((previous) => {
+
+      const updated = {
+        ...previous
+      };
+
+      delete updated[month];
+
+      return updated;
+
+    });
+
   };
 
+
+  // =========================================
+  // EDIT BUDGET
+  // =========================================
+
+  const editBudget = (month) => {
+
+    const oldAmount =
+      budgets[month];
+
+    const newAmount =
+      window.prompt(
+        `Enter new budget for ${formatMonth(
+          month
+        )}:`,
+        oldAmount
+      );
+
+
+    if (
+      newAmount === null ||
+      newAmount.trim() === ""
+    ) {
+
+      return;
+
+    }
+
+
+    const amount =
+      Number(newAmount);
+
+
+    if (
+      Number.isNaN(amount) ||
+      amount <= 0
+    ) {
+
+      alert(
+        "Please enter a valid amount."
+      );
+
+      return;
+
+    }
+
+
+    setBudgets((previous) => ({
+
+      ...previous,
+
+      [month]: amount
+
+    }));
+
+  };
+
+
+  // =========================================
+  // MONTH OPTIONS
+  // =========================================
+
+  const months = [
+
+    ["2026-01", "January 2026"],
+    ["2026-02", "February 2026"],
+    ["2026-03", "March 2026"],
+    ["2026-04", "April 2026"],
+    ["2026-05", "May 2026"],
+    ["2026-06", "June 2026"],
+    ["2026-07", "July 2026"],
+    ["2026-08", "August 2026"],
+    ["2026-09", "September 2026"],
+    ["2026-10", "October 2026"],
+    ["2026-11", "November 2026"],
+    ["2026-12", "December 2026"]
+
+  ];
+
+
+  // =========================================
+  // RENDER
+  // =========================================
+
   return (
+
     <div className="budget-page">
 
-      <h2>💰 Monthly Budget</h2>
+      {/* =====================================
+          TITLE
+      ===================================== */}
 
-      {/* MONTH */}
+      <div className="budget-header">
 
-      <div className="budget-input-card">
+        <h1>
+          💰 Monthly Budget
+        </h1>
 
-        <h3>📅 Select Month</h3>
-
-        <input
-          type="month"
-          value={selectedMonth}
-          onChange={(e) =>
-            setSelectedMonth(e.target.value)
-          }
-        />
+        <p>
+          Plan and control your monthly
+          spending.
+        </p>
 
       </div>
 
 
-      {/* BUDGET INPUT */}
+      {/* =====================================
+          SELECT MONTH
+      ===================================== */}
 
-      <div className="budget-input-card">
+      <div className="budget-card">
 
-        <h3>
-          💰 Set Budget for {selectedMonth}
-        </h3>
+        <h2>
+          📅 Select Month
+        </h2>
+
+        <select
+          className="budget-month-select"
+          value={selectedMonth}
+          onChange={(e) =>
+            setSelectedMonth(
+              e.target.value
+            )
+          }
+        >
+
+          {months.map(
+            ([value, label]) => (
+
+              <option
+                key={value}
+                value={value}
+              >
+                {label}
+              </option>
+
+            )
+          )}
+
+        </select>
+
+      </div>
+
+
+      {/* =====================================
+          SET BUDGET
+      ===================================== */}
+
+      <div className="budget-card">
+
+        <h2>
+          💰 Set Budget for{" "}
+          {formatMonth(selectedMonth)}
+        </h2>
 
         <input
+          className="budget-input"
           type="number"
+          min="0"
           placeholder="Enter budget amount"
-          value={inputBudget}
+          value={budgetAmount}
           onChange={(e) =>
-            setInputBudget(e.target.value)
+            setBudgetAmount(
+              e.target.value
+            )
           }
         />
 
-        <button onClick={handleBudget}>
-          Set Budget
+        <button
+          className="set-budget-btn"
+          onClick={handleSetBudget}
+        >
+          💾 Set Budget
         </button>
 
       </div>
 
 
-      {/* SUMMARY */}
+      {/* =====================================
+          SUMMARY CARDS
+      ===================================== */}
 
       <div className="budget-summary">
 
-        <div className="budget-card budget-total">
+        {/* BUDGET */}
 
-          <h3>Monthly Budget</h3>
+        <div className="budget-summary-card budget-blue">
 
-          <p>₹{budget}</p>
+          <h3>
+            💰 Monthly Budget
+          </h3>
+
+          <strong>
+            ₹{currentBudget.toLocaleString(
+              "en-IN"
+            )}
+          </strong>
 
         </div>
 
 
-        <div className="budget-card budget-spent">
+        {/* SPENT */}
 
-          <h3>Spent This Month</h3>
+        <div className="budget-summary-card budget-red">
 
-          <p>₹{totalExpense}</p>
+          <h3>
+            💸 Spent This Month
+          </h3>
+
+          <strong>
+            ₹{spent.toLocaleString(
+              "en-IN"
+            )}
+          </strong>
 
         </div>
 
+
+        {/* REMAINING */}
 
         <div
-          className={`budget-card ${
+          className={`budget-summary-card ${
             remaining >= 0
-              ? "budget-remaining"
-              : "budget-over"
+              ? "budget-green"
+              : "budget-danger"
           }`}
         >
 
           <h3>
-            {remaining >= 0
-              ? "Remaining"
-              : "Exceeded By"}
+            💵 Remaining
           </h3>
 
-          <p>
-            ₹{Math.abs(remaining)}
-          </p>
+          <strong>
+            ₹{remaining.toLocaleString(
+              "en-IN"
+            )}
+          </strong>
 
         </div>
 
       </div>
 
 
-      {/* PROGRESS */}
+      {/* =====================================
+          PROGRESS
+      ===================================== */}
 
-      <div className="budget-progress-card">
+      <div className="budget-card">
 
-        <div className="progress-header">
+        <div className="budget-progress-header">
 
-          <span>
+          <strong>
             Budget Used
-          </span>
+          </strong>
 
           <strong>
             {percentage.toFixed(1)}%
@@ -179,95 +505,67 @@ function Budget({ expenses }) {
         </div>
 
 
-        <div className="progress-bar">
+        <div className="budget-progress">
 
           <div
-  className={`progress-fill ${
-    percentage > 100
-      ? "progress-danger"
-      : percentage >= 80
-      ? "progress-warning"
-      : "progress-safe"
-  }`}
-  style={{
-    width: `${progress}%`
-  }}
-></div>
+            className={`budget-progress-bar ${
+              percentage >= 100
+                ? "danger"
+                : percentage >= 80
+                ? "warning"
+                : "safe"
+            }`}
+            style={{
+              width: `${percentage}%`
+            }}
+          />
+
         </div>
 
 
-        {/* STATUS */}
+        {/* MESSAGE */}
 
-        {budget === 0 ? (
+        {currentBudget === 0 ? (
 
-          <p>
-            💰 Enter your budget above.
-          </p>
+          <div className="budget-message warning-message">
 
-        ) : percentage > 100 ? (
+            ⚠️ Please set a budget for{" "}
+            {formatMonth(selectedMonth)}.
 
-          <div className="budget-exceeded">
+          </div>
 
-            <span className="warning-icon">
-              ⚠️
-            </span>
+        ) : remaining < 0 ? (
 
-            <div>
+          <div className="budget-message danger-message">
 
-              <strong>
-                Budget Limit Exceeded!
-              </strong>
 
-              <p>
-                You have exceeded your budget by ₹
-                {Math.abs(remaining)}
-              </p>
-
-            </div>
+             100%
+            🚨 You exceeded your budget by ₹
+            {Math.abs(
+              remaining
+            ).toLocaleString("en-IN")}.
 
           </div>
 
         ) : percentage >= 80 ? (
 
-          <div className="budget-warning">
+          <div className="budget-message warning-message">
 
-            <span className="warning-icon">
-              ⚠️
-            </span>
+            80%
 
-            <div>
-
-              <strong>
-                Warning!
-              </strong>
-
-              <p>
-                You are close to your budget limit.
-              </p>
-
-            </div>
+            ⚠️ You have used more than 80%
+            of your budget.
 
           </div>
 
         ) : (
 
-          <div className="budget-success">
+          <div className="budget-message success-message">
 
-            <span>
-              ✅
-            </span>
+            60%
 
-            <div>
-
-              <strong>
-                Good Job!
-              </strong>
-
-              <p>
-                You are within your budget.
-              </p>
-
-            </div>
+            ✅ Good Job! You are within
+            your budget.
 
           </div>
 
@@ -276,63 +574,201 @@ function Budget({ expenses }) {
       </div>
 
 
-      {/* MONTHLY EXPENSES */}
+      {/* =====================================
+          MONTH EXPENSES
+      ===================================== */}
 
-      <div className="budget-progress-card">
+      <div className="budget-card">
 
-        <h3>
-          📋 Expenses in {selectedMonth}
-        </h3>
+        <h2>
+          📋 Expenses in{" "}
+          {formatMonth(selectedMonth)}
+        </h2>
 
-        {monthlyExpenses.length === 0 ? (
 
-          <p>
-            No expenses for this month.
+        {monthExpenses.length === 0 ? (
+
+          <div className="no-budget-expenses">
+
+            <p>
+              No expenses for this month.
+            </p>
+
+          </div>
+
+        ) : (
+
+          <div className="budget-expense-list">
+
+            {monthExpenses
+              .filter(
+                (expense) =>
+                  expense.type ===
+                  "Expense"
+              )
+              .map((expense) => (
+
+                <div
+                  className="budget-expense-row"
+                  key={
+                    expense.id ||
+                    `${expense.name}-${expense.date}-${expense.amount}`
+                  }
+                >
+
+                  <div>
+
+                    <strong>
+                      {expense.name}
+                    </strong>
+
+                    <small>
+                      {expense.category ||
+                        "Other"}{" "}
+                      •{" "}
+                      {expense.date}
+                    </small>
+
+                  </div>
+
+                  <strong>
+                    -₹
+                    {Number(
+                      expense.amount || 0
+                    ).toLocaleString(
+                      "en-IN"
+                    )}
+                  </strong>
+
+                </div>
+
+              ))}
+
+          </div>
+
+        )}
+
+      </div>
+
+
+      {/* =====================================
+          BUDGET HISTORY
+      ===================================== */}
+
+      <div className="budget-card">
+
+        <h2>
+          📜 Budget History
+        </h2>
+
+
+        {Object.keys(budgets).length === 0 ? (
+
+          <p className="empty-history">
+            No saved budgets yet.
           </p>
 
         ) : (
 
-          monthlyExpenses.map((expense) => (
+          <div className="budget-history">
 
-            <div
-              className="recent-item"
-              key={expense.id}
-            >
+            {Object.entries(budgets)
+              .sort()
+              .reverse()
+              .map(
+                ([month, amount]) => (
 
-              <div className="recent-icon expense-icon">
-                💸
-              </div>
+                  <div
+                    className="budget-history-row"
+                    key={month}
+                  >
 
-              <div className="recent-details">
+                    <div className="history-month">
 
-                <h4>
-                  {expense.name}
-                </h4>
+                      <span>
+                        💰
+                      </span>
 
-                <p>
-                  📂 {expense.category}
-                  {" • "}
-                  📅 {expense.date}
-                </p>
+                      <div>
 
-              </div>
+                        <strong>
+                          {formatMonth(
+                            month
+                          )}
+                        </strong>
 
-              <div className="recent-amount recent-expense">
+                        <small>
+                          Monthly Budget
+                        </small>
 
-                -₹{expense.amount}
+                      </div>
 
-              </div>
+                    </div>
 
-            </div>
 
-          ))
+                    <strong className="history-amount">
+
+                      ₹
+                      {Number(
+                        amount
+                      ).toLocaleString(
+                        "en-IN"
+                      )}
+
+                    </strong>
+
+
+                    <div className="history-actions">
+
+                      <button
+                        className="edit-budget-btn"
+                        onClick={() =>
+                          editBudget(month)
+                        }
+                      >
+                        ✏️ Edit
+                      </button>
+
+
+                      <button
+                        className="delete-budget-btn"
+                        onClick={() =>
+                          deleteBudget(month)
+                        }
+                      >
+                        🗑️ Delete
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                )
+              )}
+
+          </div>
 
         )}
 
       </div>
 
+
+      {/* =====================================
+          FOOTER NOTE
+      ===================================== */}
+
+      <div className="budget-note">
+
+        💡 Tip: Set a realistic monthly
+        budget and monitor your spending
+        regularly.
+
+      </div>
+
     </div>
+
   );
+
 }
 
 export default Budget;

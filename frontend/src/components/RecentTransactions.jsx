@@ -75,8 +75,15 @@ function RecentTransactions({ expenses, setPage }) {
                     : "💵 Income"}
 
                   {" • "}
+                                 <span>
+  💳 {expense.paymentMethod || "Cash"}
+</span>
+
+{" • "}
 
                   📅 {expense.date}
+
+   
 
                 </p>
 

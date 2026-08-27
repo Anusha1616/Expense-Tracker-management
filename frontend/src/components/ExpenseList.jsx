@@ -11,6 +11,7 @@ function ExpenseList({
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
 
+
   // =========================
   // SEARCH + FILTER + MONTH
   // =========================
@@ -19,6 +20,8 @@ function ExpenseList({
 
     const searchText = search.toLowerCase();
 
+
+    // SEARCH
     const matchesSearch =
       (expense.name || "")
         .toLowerCase()
@@ -30,30 +33,52 @@ function ExpenseList({
 
       (expense.category || "")
         .toLowerCase()
+        .includes(searchText) ||
+
+      (expense.paymentMethod || "Cash")
+        .toLowerCase()
         .includes(searchText);
 
+
+    // TYPE + CATEGORY + PAYMENT METHOD FILTER
     const matchesFilter =
       filter === "All" ||
-      expense.type === filter ||
-      expense.category === filter;
 
+      expense.type === filter ||
+
+      expense.category === filter ||
+
+      (expense.paymentMethod || "Cash") === filter;
+
+
+    // MONTH FILTER
     const matchesMonth =
       selectedMonth === "All" ||
+
       expense.date?.startsWith(selectedMonth);
 
-    return matchesSearch && matchesFilter && matchesMonth;
 
-  }); // ⭐ IMPORTANT: closes filter()
+    return (
+      matchesSearch &&
+      matchesFilter &&
+      matchesMonth
+    );
+
+  });
+
 
   return (
 
     <div className="expense-list">
 
+
       {/* =========================
           TITLE
       ========================= */}
 
-      <h2>💳 Transaction List</h2>
+      <h2>
+        💳 Transaction List
+      </h2>
 
 
       {/* =========================
@@ -62,7 +87,10 @@ function ExpenseList({
 
       <div className="month-filter">
 
-        <label>📅 Month: </label>
+        <label>
+          📅 Month:
+        </label>
+
 
         <select
           value={selectedMonth}
@@ -134,6 +162,7 @@ function ExpenseList({
 
       <div className="transaction-controls">
 
+
         {/* SEARCH */}
 
         <input
@@ -161,6 +190,9 @@ function ExpenseList({
             All Transactions
           </option>
 
+
+          {/* TYPE */}
+
           <option value="Income">
             💵 Income
           </option>
@@ -168,6 +200,9 @@ function ExpenseList({
           <option value="Expense">
             💸 Expense
           </option>
+
+
+          {/* CATEGORIES */}
 
           <option value="Food">
             🍔 Food
@@ -249,6 +284,29 @@ function ExpenseList({
             📦 Other
           </option>
 
+
+          {/* PAYMENT METHODS */}
+
+          <option value="Cash">
+            💵 Cash
+          </option>
+
+          <option value="UPI">
+            📱 UPI
+          </option>
+
+          <option value="Debit Card">
+            💳 Debit Card
+          </option>
+
+          <option value="Credit Card">
+            💳 Credit Card
+          </option>
+
+          <option value="Bank Transfer">
+            🏦 Bank Transfer
+          </option>
+
         </select>
 
       </div>
@@ -262,7 +320,9 @@ function ExpenseList({
 
         <div className="no-transactions">
 
-          <h3>📭 No transactions found</h3>
+          <h3>
+            📭 No transactions found
+          </h3>
 
           <p>
             Try adding a transaction or
@@ -273,6 +333,7 @@ function ExpenseList({
 
       ) : (
 
+
         /* =========================
            TRANSACTION CARDS
         ========================= */
@@ -281,11 +342,16 @@ function ExpenseList({
 
           {filteredExpenses.map((expense) => {
 
+            // Find original index
+            // because filtered array index
+            // may be different
+
             const originalIndex =
               expenses.findIndex(
                 (item) =>
                   item.id === expense.id
               );
+
 
             return (
 
@@ -298,21 +364,38 @@ function ExpenseList({
                 key={expense.id}
               >
 
-                {/* LEFT SIDE */}
+
+                {/* =========================
+                    TRANSACTION INFORMATION
+                ========================= */}
 
                 <div className="transaction-info">
+
+
+                  {/* NAME */}
 
                   <h3>
                     {expense.name}
                   </h3>
 
+
+                  {/* DETAILS */}
+
                   <div className="transaction-details">
 
+
+                    {/* TYPE */}
+
                     <span>
+
                       {expense.type === "Income"
                         ? "💵 Income"
                         : "💸 Expense"}
+
                     </span>
+
+
+                    {/* CATEGORY */}
 
                     {expense.type === "Expense" && (
 
@@ -322,16 +405,31 @@ function ExpenseList({
 
                     )}
 
+
+                    {/* DATE */}
+
                     <span>
                       📅 {expense.date}
                     </span>
+
+
+                    {/* PAYMENT METHOD */}
+
+                    <span>
+                      💳{" "}
+                      {expense.paymentMethod ||
+                        "Cash"}
+                    </span>
+
 
                   </div>
 
                 </div>
 
 
-                {/* AMOUNT */}
+                {/* =========================
+                    AMOUNT
+                ========================= */}
 
                 <div
                   className={`transaction-amount ${
@@ -344,14 +442,20 @@ function ExpenseList({
                   {expense.type === "Income"
                     ? "+"
                     : "-"}
+
                   ₹{expense.amount}
 
                 </div>
 
 
-                {/* BUTTONS */}
+                {/* =========================
+                    BUTTONS
+                ========================= */}
 
                 <div className="transaction-actions">
+
+
+                  {/* EDIT */}
 
                   <button
                     className="edit-btn"
@@ -365,6 +469,8 @@ function ExpenseList({
                   </button>
 
 
+                  {/* DELETE */}
+
                   <button
                     className="delete-btn"
                     onClick={() =>
@@ -376,7 +482,9 @@ function ExpenseList({
                     🗑️ Delete
                   </button>
 
+
                 </div>
+
 
               </div>
 
@@ -391,6 +499,8 @@ function ExpenseList({
     </div>
 
   );
+
 }
+
 
 export default ExpenseList;

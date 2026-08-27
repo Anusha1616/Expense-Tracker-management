@@ -7,6 +7,7 @@ function AddExpenseForm({ expenses, setExpenses }) {
   const [type, setType] = useState("Expense");
   const [category, setCategory] = useState("Food");
   const [date, setDate] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Cash");
 
 
   // =========================
@@ -47,6 +48,8 @@ function AddExpenseForm({ expenses, setExpenses }) {
       // Date
       date: date,
 
+      paymentMethod: paymentMethod
+
     };
 
 
@@ -63,98 +66,70 @@ function AddExpenseForm({ expenses, setExpenses }) {
     setType("Expense");
     setCategory("Food");
     setDate("");
+    setPaymentMethod("Cash");
 
   }
 
 
   return (
 
-    <div>
+  
+  <div className="add-expense-form">
 
-      {/* =========================
-          TITLE
-      ========================= */}
-
-      <h2>
-        {type === "Income"
-          ? "Add New Income"
-          : "Add New Expense"}
-      </h2>
+    {/* TITLE */}
+    <h2>
+      {type === "Income"
+        ? "Add New Income"
+        : "Add New Expense"}
+    </h2>
 
 
-      {/* =========================
-          NAME
-      ========================= */}
+    {/* NAME */}
+    <div className="form-group">
 
       <label>
-
         {type === "Income"
           ? "Income Name"
           : "Expense Name"}
-
       </label>
-
-      <br />
 
       <input
         type="text"
-
         placeholder={
           type === "Income"
             ? "Enter income name"
             : "Enter expense name"
         }
-
         value={name}
-
-        onChange={(e) =>
-          setName(e.target.value)
-        }
+        onChange={(e) => setName(e.target.value)}
       />
 
-
-      <br />
-      <br />
+    </div>
 
 
-      {/* =========================
-          AMOUNT
-      ========================= */}
+    {/* AMOUNT */}
+    <div className="form-group">
 
       <label>Amount</label>
-
-      <br />
 
       <input
         type="number"
         placeholder="Enter amount"
-
         value={amount}
-
-        onChange={(e) =>
-          setAmount(e.target.value)
-        }
+        onChange={(e) => setAmount(e.target.value)}
       />
 
-
-      <br />
-      <br />
+    </div>
 
 
-      {/* =========================
-          TYPE
-      ========================= */}
+    {/* TYPE */}
+    <div className="form-group small-field">
 
       <label>Type</label>
 
-      <br />
-
       <select
         value={type}
-
-        onChange={(e) =>
-          setType(e.target.value)
-        }
+        onChange={(e) => setType(e.target.value)}
       >
 
         <option value="Expense">
@@ -167,161 +142,99 @@ function AddExpenseForm({ expenses, setExpenses }) {
 
       </select>
 
-
-      <br />
-      <br />
+    </div>
 
 
-      {/* =========================
-          CATEGORY
-          ONLY FOR EXPENSE
-      ========================= */}
+    {/* CATEGORY */}
+    {type === "Expense" && (
 
-      {type === "Expense" && (
+      <div className="form-group small-field">
 
-        <>
+        <label>Category</label>
 
-          <label>Category</label>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
 
-          <br />
+          <option value="Food">🍔 Food</option>
+          <option value="Travel">✈️ Travel</option>
+          <option value="Shopping">🛍️ Shopping</option>
+          <option value="Bills">🧾 Bills & Utilities</option>
+          <option value="Education">🎓 Education</option>
+          <option value="Health">🏥 Health & Medical</option>
+          <option value="Entertainment">🎬 Entertainment</option>
+          <option value="Rent">🏠 Rent</option>
+          <option value="Transportation">🚗 Transportation</option>
+          <option value="Fuel">⛽ Fuel</option>
+          <option value="Groceries">🛒 Groceries</option>
+          <option value="Subscriptions">📱 Subscriptions</option>
+          <option value="Clothing">👕 Clothing</option>
+          <option value="Fitness">💪 Fitness & Gym</option>
+          <option value="Insurance">🛡️ Insurance</option>
+          <option value="Investments">📈 Investments</option>
+          <option value="Gifts">🎁 Gifts</option>
+          <option value="Family">👨‍👩‍👧 Family</option>
+          <option value="Personal">👤 Personal</option>
+          <option value="Other">📦 Other</option>
 
-          <select
-            value={category}
+        </select>
 
-            onChange={(e) =>
-              setCategory(e.target.value)
-            }
-          >
+      </div>
 
-            <option value="Food">
-              🍔 Food
-            </option>
-
-            <option value="Travel">
-              ✈️ Travel
-            </option>
-
-            <option value="Shopping">
-              🛍️ Shopping
-            </option>
-
-            <option value="Bills">
-              🧾 Bills & Utilities
-            </option>
-
-            <option value="Education">
-              🎓 Education
-            </option>
-
-            <option value="Health">
-              🏥 Health & Medical
-            </option>
-
-            <option value="Entertainment">
-              🎬 Entertainment
-            </option>
-
-            <option value="Rent">
-              🏠 Rent
-            </option>
-
-            <option value="Transportation">
-              🚗 Transportation
-            </option>
-
-            <option value="Fuel">
-              ⛽ Fuel
-            </option>
-
-            <option value="Groceries">
-              🛒 Groceries
-            </option>
-
-            <option value="Subscriptions">
-              📱 Subscriptions
-            </option>
-
-            <option value="Clothing">
-              👕 Clothing
-            </option>
-
-            <option value="Fitness">
-              💪 Fitness & Gym
-            </option>
-
-            <option value="Insurance">
-              🛡️ Insurance
-            </option>
-
-            <option value="Investments">
-              📈 Investments
-            </option>
-
-            <option value="Gifts">
-              🎁 Gifts
-            </option>
-
-            <option value="Family">
-              👨‍👩‍👧 Family
-            </option>
-
-            <option value="Personal">
-              👤 Personal
-            </option>
-
-            <option value="Other">
-              📦 Other
-            </option>
-
-          </select>
-
-          <br />
-          <br />
-
-        </>
-
-      )}
+    )}
 
 
-      {/* =========================
-          DATE
-          FOR BOTH
-      ========================= */}
+    {/* DATE */}
+    <div className="form-group">
 
       <label>Date</label>
 
-      <br />
-
       <input
         type="date"
-
         value={date}
-
-        onChange={(e) =>
-          setDate(e.target.value)
-        }
+        onChange={(e) => setDate(e.target.value)}
       />
-
-
-      <br />
-      <br />
-
-
-      {/* =========================
-          ADD BUTTON
-      ========================= */}
-
-      <button onClick={addExpense}>
-
-        {type === "Income"
-          ? "Add Income"
-          : "Add Expense"}
-
-      </button>
 
     </div>
 
-  );
+
+    {/* PAYMENT METHOD */}
+    <div className="form-group small-field">
+
+      <label>💳 Payment Method</label>
+
+      <select
+        value={paymentMethod}
+        onChange={(e) =>
+          setPaymentMethod(e.target.value)
+        }
+      >
+
+        <option value="Cash">💵 Cash</option>
+        <option value="UPI">📱 UPI</option>
+        <option value="Debit Card">💳 Debit Card</option>
+        <option value="Credit Card">💳 Credit Card</option>
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+
+      </select>
+
+    </div>
+
+
+    {/* ADD BUTTON */}
+    <button
+      className="add-expense-button"
+      onClick={addExpense}
+    >
+      {type === "Income"
+        ? "Add Income"
+        : "Add Expense"}
+    </button>
+
+  </div>
+
+);
 }
 
 export default AddExpenseForm;
