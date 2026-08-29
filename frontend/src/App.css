@@ -1,4 +1,4 @@
-/* Reset */
+﻿/* Reset */
 *{
     margin:0;
     padding:0;
@@ -5927,4 +5927,506 @@ footer{
 .add-expense-button:hover {
   background: #1d4ed8;
   transform: translateY(-1px);
+}
+
+
+
+
+/* =========================
+   PROFESSIONAL SETTINGS COLORS
+========================= */
+
+/* Theme buttons */
+.theme-buttons button {
+  background: #6366f1;
+  color: white;
+}
+
+/* Clear Transactions */
+.clear-button {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Clear Budgets */
+.clear-budget-button {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+/* Reset All Data */
+.reset-button {
+  background: #dc2626;
+  color: white;
+}
+
+/* Backup & Restore */
+.backup-button,
+.restore-button {
+  background: #2563eb;
+  color: white;
+}
+
+/* Profile & Security */
+.profile-button,
+.security-button {
+  background: #2563eb;
+  color: white;
+}
+
+/* Logout */
+.logout-button {
+  background: #dc2626;
+  color: white;
+}
+
+/* Hover effects */
+.reset-button:hover,
+.logout-button:hover {
+  background: #b91c1c;
+}
+
+.backup-button:hover,
+.restore-button:hover,
+.profile-button:hover,
+.security-button:hover {
+  background: #1d4ed8;
+}
+
+
+
+/* =========================
+   BACKUP & RESTORE
+========================= */
+
+.backup-button,
+.restore-button {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* Backup */
+.backup-button {
+  background: #2563eb;
+  color: white;
+}
+
+.backup-button:hover {
+  background: #1d4ed8;
+}
+
+/* Restore */
+.restore-button {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.restore-button:hover {
+  background: #c7d2fe;
+}
+
+
+/* =========================
+   DATA MANAGEMENT
+========================= */
+
+.clear-button,
+.clear-budget-button,
+.reset-button,
+.backup-button,
+.restore-button,
+.profile-button,
+.security-button,
+.logout-button {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 14px 20px;
+  margin: 8px 0;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 18px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+
+/* =========================
+   CLEAR TRANSACTIONS
+========================= */
+
+.clear-button {
+  background: #fff1f2;
+  color: #dc2626;
+}
+
+.clear-button:hover {
+  background: #ffe4e6;
+}
+
+
+/* =========================
+   CLEAR BUDGETS
+========================= */
+
+.clear-budget-button {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.clear-budget-button:hover {
+  background: #ffedd5;
+}
+
+
+/* =========================
+   RESET ALL DATA
+========================= */
+
+.reset-button {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.reset-button:hover {
+  background: #fee2e2;
+}
+
+
+/* =========================
+   BACKUP
+========================= */
+
+.backup-button {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.backup-button:hover {
+  background: #dbeafe;
+}
+
+
+/* =========================
+   RESTORE
+========================= */
+
+.restore-button {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.restore-button:hover {
+  background: #dcfce7;
+}
+
+
+/* =========================
+   PROFILE
+========================= */
+
+.profile-button {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.profile-button:hover {
+  background: #dbeafe;
+}
+
+
+/* =========================
+   SECURITY
+========================= */
+
+.security-button {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.security-button:hover {
+  background: #ede9fe;
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+.logout-button {
+  background: #fff1f2;
+  color: #dc2626;
+}
+
+.logout-button:hover {
+  background: #ffe4e6;
+}
+
+
+
+/* Dashboard Summary Colors */
+
+.income-card {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.expense-card {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.balance-card {
+  background: #EDE7F6;
+  color: #5E35B1;
+}
+
+
+.budget-message {
+  font-size: 16px;
+  padding: 12px;
+  text-align: center;
+}
+
+.budget-message strong {
+  font-size: 18px;
+}
+
+.budget-message p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+
+/* =========================================
+   REPORTS - SUMMARY CARDS
+   Desktop + Mobile Responsive
+========================================= */
+
+.reports-page .summary-card {
+  border-radius: 18px;
+  padding: 22px;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  min-height: 145px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Hover effect */
+.reports-page .summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.16);
+}
+
+
+/* =========================================
+   💰 TOTAL INCOME
+========================================= */
+
+.reports-page .income-card {
+  background: linear-gradient(
+    135deg,
+    #10b981,
+    #34d399
+  ) !important;
+}
+
+.reports-page .income-card .amount {
+  color: #ffffff !important;
+}
+
+
+/* =========================================
+   💸 TOTAL EXPENSE
+========================================= */
+
+.reports-page .expense-card {
+  background: linear-gradient(
+    135deg,
+    #ef4444,
+    #f97316
+  ) !important;
+}
+
+.reports-page .expense-card .amount {
+  color: #ffffff !important;
+}
+
+
+/* =========================================
+   💵 BALANCE
+========================================= */
+
+.reports-page .balance-card {
+  background: linear-gradient(
+    135deg,
+    #4f46e5,
+    #7c3aed
+  ) !important;
+}
+
+.reports-page .balance-card .amount {
+  color: #ffffff !important;
+}
+
+
+/* =========================================
+   📈 SAVINGS
+========================================= */
+
+.reports-page .savings-card {
+  background: linear-gradient(
+    135deg,
+    #8b5cf6,
+    #a855f7
+  ) !important;
+}
+
+.reports-page .savings-card .amount {
+  color: #ffffff !important;
+}
+
+
+/* =========================================
+   CARD TEXT
+========================================= */
+
+.reports-page .summary-card h3,
+.reports-page .summary-card h4,
+.reports-page .summary-card p,
+.reports-page .summary-card span {
+  color: #ffffff !important;
+}
+
+
+/* =========================================
+   DESKTOP
+========================================= */
+
+@media (min-width: 769px) {
+
+  .reports-page .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 768px) {
+
+  .reports-page .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .reports-page .summary-card {
+    padding: 18px;
+    min-height: 130px;
+  }
+
+  .reports-page .summary-card .amount {
+    font-size: 26px;
+  }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+  .reports-page .summary-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .reports-page .summary-card {
+    width: 100%;
+    min-height: 120px;
+    padding: 18px;
+    border-radius: 16px;
+    box-sizing: border-box;
+  }
+
+  .reports-page .summary-card h3 {
+    font-size: 17px;
+  }
+
+  .reports-page .summary-card .amount {
+    font-size: 25px;
+  }
+
+}
+
+
+/* =========================================
+   VERY SMALL MOBILE
+========================================= */
+
+@media (max-width: 360px) {
+
+  .reports-page .summary-card {
+    padding: 15px;
+  }
+
+  .reports-page .summary-card h3 {
+    font-size: 16px;
+  }
+
+  .reports-page .summary-card .amount {
+    font-size: 23px;
+  }
+
+}
+
+/* Desktop — keep your existing design */
+
+/* Laptop / smaller screens */
+@media (max-width: 1200px) {
+  /* reduce spacing slightly */
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  /* rearrange cards */
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  /* one-column layout */
+}
+
+/* Small phones */
+@media (max-width: 400px) {
+  /* smaller padding/fonts */
 }

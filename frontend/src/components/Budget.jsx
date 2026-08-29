@@ -1,4 +1,6 @@
+
 import { useEffect, useMemo, useState } from "react";
+import API from "../api/api";
 
 function Budget({ expenses = [] }) {
 
@@ -22,30 +24,6 @@ function Budget({ expenses = [] }) {
   // BUDGETS
   // =========================================
 
-  const [budgets, setBudgets] = useState(() => {
-
-    try {
-
-      const saved =
-        localStorage.getItem("monthlyBudgets");
-
-      return saved
-        ? JSON.parse(saved)
-        : {};
-
-    } catch (error) {
-
-      console.error(
-        "Error loading budgets:",
-        error
-      );
-
-      return {};
-
-    }
-
-  });
-
 
   // =========================================
   // BUDGET INPUT
@@ -54,21 +32,43 @@ function Budget({ expenses = [] }) {
   const [budgetAmount, setBudgetAmount] =
     useState("");
 
+ const [budgets, setBudgets] = useState({});
 
   // =========================================
   // SAVE BUDGETS
   // =========================================
+useEffect(() => {
 
-  useEffect(() => {
+  const fetchBudgets = async () => {
 
-    localStorage.setItem(
-      "monthlyBudgets",
-      JSON.stringify(budgets)
-    );
+    try {
 
-  }, [budgets]);
+      const response = await API.get("/budgets");
 
+      const budgetData = {};
 
+      response.data.budgets.forEach((budget) => {
+
+        budgetData[budget.month] = {
+          id: budget.id,
+          amount: budget.amount
+        };
+
+      });
+
+      setBudgets(budgetData);
+
+    } catch (error) {
+
+      console.error("Failed to fetch budgets:", error);
+
+    }
+
+  };
+
+  fetchBudgets();
+
+}, []);
   // =========================================
   // MONTH NAME
   // =========================================
@@ -140,18 +140,20 @@ function Budget({ expenses = [] }) {
   // =========================================
   // CURRENT BUDGET
   // =========================================
-
-  const currentBudget =
-    Number(budgets[selectedMonth] || 0);
-
+const currentBudget =
+  Number(budgets[selectedMonth]?.amount) || 0;
 
   // =========================================
   // REMAINING
   // =========================================
 
-  const remaining =
-    currentBudget - spent;
+  // const remaining =
+  //   currentBudget - spent;
 
+ const remaining = Math.max(
+  0,
+  currentBudget - spent
+);
 
   // =========================================
   // BUDGET USED %
@@ -170,137 +172,166 @@ function Budget({ expenses = [] }) {
   // SET / UPDATE BUDGET
   // =========================================
 
-  const handleSetBudget = () => {
+ const handleSetBudget = async () => {
 
-    const amount =
-      Number(budgetAmount);
+  if (!budgetAmount || Number(budgetAmount) <= 0) {
+    alert("Please enter a valid budget amount");
+    return;
+  }
 
-    if (
-      !budgetAmount ||
-      Number.isNaN(amount) ||
-      amount <= 0
-    ) {
+  try {
 
-      alert(
-        "Please enter a valid budget amount."
-      );
-
-      return;
-
-    }
-
-
-    setBudgets((previous) => ({
-
-      ...previous,
-
-      [selectedMonth]: amount
-
-    }));
-
-
-    setBudgetAmount("");
-
-
-    alert(
-      `Budget set for ${formatMonth(
-        selectedMonth
-      )}`
+    const response = await API.post(
+      "/budgets",
+      {
+        month: selectedMonth,
+        amount: Number(budgetAmount)
+      }
     );
 
-  };
+    console.log(
+      "Budget saved:",
+      response.data
+    );
 
+    const savedBudget =
+      response.data.budget;
+
+setBudgets((prev) => ({
+  ...prev,
+  [savedBudget.month]: {
+    id: savedBudget.id,
+    amount: savedBudget.amount
+  }
+}));
+
+    alert("Budget saved successfully!");
+
+  } catch (error) {
+
+    console.error(
+      "Save budget error:",
+      error
+    );
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to save budget"
+    );
+  }
+};
 
   // =========================================
   // DELETE BUDGET
   // =========================================
 
-  const deleteBudget = (month) => {
+const deleteBudget = async (id, month) => {
 
-    const confirmDelete =
-      window.confirm(
-        `Delete budget for ${formatMonth(
-          month
-        )}?`
-      );
+  const confirmDelete = window.confirm(
+    `Delete budget for ${formatMonth(month)}?`
+  );
 
-    if (!confirmDelete) {
-      return;
-    }
+  if (!confirmDelete) {
+    return;
+  }
 
+  try {
+
+    await API.delete(`/budgets/${id}`);
 
     setBudgets((previous) => {
 
-      const updated = {
-        ...previous
-      };
+      const updated = { ...previous };
 
       delete updated[month];
 
       return updated;
-
     });
 
-  };
+    alert("Budget deleted successfully!");
 
+  } catch (error) {
 
-  // =========================================
-  // EDIT BUDGET
-  // =========================================
+    console.error(
+      "Delete budget error:",
+      error
+    );
 
-  const editBudget = (month) => {
+    alert(
+      error.response?.data?.message ||
+      "Failed to delete budget"
+    );
+  }
+};
 
-    const oldAmount =
-      budgets[month];
+// =========================================
+// EDIT BUDGET
+// =========================================
+// =========================================
+// EDIT BUDGET
+// =========================================
+const editBudget = async (id, month) => {
 
-    const newAmount =
-      window.prompt(
-        `Enter new budget for ${formatMonth(
-          month
-        )}:`,
-        oldAmount
-      );
+  console.log("EDIT ID:", id);
+  console.log("EDIT MONTH:", month);
 
+  const oldAmount = budgets[month]?.amount;
 
-    if (
-      newAmount === null ||
-      newAmount.trim() === ""
-    ) {
+  const newAmount = window.prompt(
+    `Enter new budget for ${formatMonth(month)}:`,
+    oldAmount
+  );
 
-      return;
+  if (
+    newAmount === null ||
+    newAmount.trim() === ""
+  ) {
+    return;
+  }
 
-    }
+  const amount = Number(newAmount);
 
+  if (
+    Number.isNaN(amount) ||
+    amount <= 0
+  ) {
+    alert("Please enter a valid amount.");
+    return;
+  }
 
-    const amount =
-      Number(newAmount);
+  try {
 
+    const response = await API.put(
+      `/budgets/${id}`,
+      {
+        amount
+      }
+    );
 
-    if (
-      Number.isNaN(amount) ||
-      amount <= 0
-    ) {
+    console.log("UPDATE RESPONSE:", response.data);
 
-      alert(
-        "Please enter a valid amount."
-      );
-
-      return;
-
-    }
-
+    const updatedBudget = response.data.budget;
 
     setBudgets((previous) => ({
-
       ...previous,
-
-      [month]: amount
-
+      [updatedBudget.month]: updatedBudget
     }));
 
-  };
+    alert("Budget updated successfully!");
 
+  } catch (error) {
 
+    console.error(
+      "Update budget error:",
+      error
+    );
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to update budget"
+    );
+  }
+};
   // =========================================
   // MONTH OPTIONS
   // =========================================
@@ -524,52 +555,46 @@ function Budget({ expenses = [] }) {
 
 
         {/* MESSAGE */}
+{currentBudget === 0 ? (
 
-        {currentBudget === 0 ? (
+  <div className="budget-message warning-message">
+    ⚠️ Please set a budget for {formatMonth(selectedMonth)}.
+  </div>
 
-          <div className="budget-message warning-message">
+)  : spent > currentBudget ? (
 
-            ⚠️ Please set a budget for{" "}
-            {formatMonth(selectedMonth)}.
+  <div className="budget-message danger-message">
+    🚨 <strong>Budget Exceeded!</strong>
 
-          </div>
+    <p>
+      You have exceeded your budget by ₹
+      {Math.abs(remaining).toLocaleString("en-IN")}.
+    </p>
+  </div>
 
-        ) : remaining < 0 ? (
+) : percentage >= 80 ? (
 
-          <div className="budget-message danger-message">
+  <div className="budget-message warning-message">
+    ⚠️ You have used more than 80% of your budget.
+  </div>
 
+) : (
 
-             100%
-            🚨 You exceeded your budget by ₹
-            {Math.abs(
-              remaining
-            ).toLocaleString("en-IN")}.
+  <div className="budget-message success-message">
+    ✅ <strong>Budget Status</strong>
 
-          </div>
+    <p>
+      You have used {percentage.toFixed(0)}%
+      of your monthly budget.
+    </p>
+{/* 
+    <p>
+      Remaining: ₹
+      {remaining.toLocaleString("en-IN")}
+    </p> */}
+  </div>
 
-        ) : percentage >= 80 ? (
-
-          <div className="budget-message warning-message">
-
-            80%
-
-            ⚠️ You have used more than 80%
-            of your budget.
-
-          </div>
-
-        ) : (
-
-          <div className="budget-message success-message">
-
-            60%
-
-            ✅ Good Job! You are within
-            your budget.
-
-          </div>
-
-        )}
+)}
 
       </div>
 
@@ -676,7 +701,7 @@ function Budget({ expenses = [] }) {
               .sort()
               .reverse()
               .map(
-                ([month, amount]) => (
+                ([month, budget]) => (
 
                   <div
                     className="budget-history-row"
@@ -710,7 +735,7 @@ function Budget({ expenses = [] }) {
 
                       ₹
                       {Number(
-                        amount
+                        budget.amount
                       ).toLocaleString(
                         "en-IN"
                       )}
@@ -721,24 +746,29 @@ function Budget({ expenses = [] }) {
                     <div className="history-actions">
 
                       <button
-                        className="edit-budget-btn"
-                        onClick={() =>
-                          editBudget(month)
-                        }
-                      >
-                        ✏️ Edit
-                      </button>
+  className="edit-budget-btn"
+  onClick={() =>
+    editBudget(
+      budgets[month].id,
+      month
+    )
+  }
+>
+  ✏️ Edit
+</button>
 
 
-                      <button
-                        className="delete-budget-btn"
-                        onClick={() =>
-                          deleteBudget(month)
-                        }
-                      >
-                        🗑️ Delete
-                      </button>
-
+                    <button
+  className="delete-budget-btn"
+  onClick={() =>
+    deleteBudget(
+      budgets[month].id,
+      month
+    )
+  }
+>
+  🗑️ Delete
+</button>
                     </div>
 
                   </div>

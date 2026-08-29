@@ -7,10 +7,15 @@ const {
   getExpenses,
   getExpenseById,
   updateExpense,
-  deleteExpense
+  deleteExpense,
+  deleteAllExpenses,
+  restoreExpenses
 } = require("../controllers/expenseController");
 
 const authMiddleware = require("../middleware/authMiddleware");
+
+// console.log("authMiddleware:", typeof authMiddleware);
+// console.log("addExpense:", typeof addExpense);
 
 
 // =====================================================
@@ -32,6 +37,19 @@ router.get(
   getExpenses
 );
 
+// RESTORE
+router.post(
+  "/restore",
+  authMiddleware,
+  restoreExpenses
+);
+
+// delete all transactions  
+router.delete(
+  "/",
+  authMiddleware,
+  deleteAllExpenses
+);
 
 // Get single transaction
 router.get(
@@ -49,12 +67,14 @@ router.put(
 );
 
 
-// Delete transaction
+// Delete transaction one
 router.delete(
   "/:id",
   authMiddleware,
   deleteExpense
 );
+
+
 
 
 module.exports = router;

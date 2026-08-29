@@ -408,9 +408,13 @@ function ExpenseList({
 
                     {/* DATE */}
 
-                    <span>
+                    {/* <span>
                       📅 {expense.date}
-                    </span>
+                    </span> */}
+
+                    <span>
+  {new Date(expense.date).toLocaleDateString("en-IN")}
+</span>
 
 
                     {/* PAYMENT METHOD */}
@@ -477,7 +481,7 @@ function ExpenseList({
                       deleteExpense(
                         originalIndex
                       )
-                    }
+                    } 
                   >
                     🗑️ Delete
                   </button>

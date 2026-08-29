@@ -1,17 +1,49 @@
+import { useEffect, useState } from "react";
+import API from "../api/api";
+
 function BudgetAlert({ expenses }) {
 
   // Get current month
-  const currentMonth = new Date().toISOString().slice(0, 7);
+  const currentMonth = new Date()
+    .toISOString()
+    .slice(0, 7);
 
-  // Get all saved budgets
-  const budgets = JSON.parse(
-    localStorage.getItem("monthlyBudgets") || "{}"
-  );
+  const [budget, setBudget] = useState(0);
 
-  // Current month's budget
-  const budget = Number(
-    budgets[currentMonth] || 0
-  );
+  // Get current month's budget from backend
+  useEffect(() => {
+
+    const fetchBudget = async () => {
+
+      try {
+
+        const response = await API.get("/budgets");
+
+        const currentBudget =
+          response.data.budgets.find(
+            (item) =>
+              item.month === currentMonth
+          );
+
+        setBudget(
+          Number(currentBudget?.amount || 0)
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Failed to fetch budget:",
+          error
+        );
+
+        setBudget(0);
+      }
+
+    };
+
+    fetchBudget();
+
+  }, [currentMonth]);
 
   // Calculate current month's expenses
   const monthlyExpense = expenses

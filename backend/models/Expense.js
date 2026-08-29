@@ -10,25 +10,35 @@ const expenseSchema = new mongoose.Schema(
 
     name: {
       type: String,
-      required: true,
-      trim: true
+      required: true
     },
 
     amount: {
       type: Number,
-      required: true,
-      min: 0
+      required: true
     },
 
     type: {
       type: String,
-      enum: ["Income", "Expense"],
+      enum: ["Expense", "Income"],
       default: "Expense"
     },
 
     category: {
       type: String,
       default: "Other"
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: [
+        "Cash",
+        "UPI",
+        "Debit Card",
+        "Credit Card",
+        "Bank Transfer"
+      ],
+      default: "Cash"
     },
 
     date: {
@@ -41,4 +51,7 @@ const expenseSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Expense", expenseSchema);
+module.exports = mongoose.model(
+  "Expense",
+  expenseSchema
+);

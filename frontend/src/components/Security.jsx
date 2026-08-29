@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API from "../api/api";
 
 function Security({ setPage }) {
 
@@ -18,56 +19,66 @@ function Security({ setPage }) {
   // CHANGE PASSWORD
   // =========================
 
-  const changePassword = () => {
+  // =========================
+// CHANGE PASSWORD
+// =========================
 
-    if (
-      !currentPassword ||
-      !newPassword ||
-      !confirmPassword
-    ) {
-      alert("Please fill all password fields.");
-      return;
-    }
+const changePassword = async () => {
 
-    if (newPassword.length < 6) {
-      alert(
-        "New password must contain at least 6 characters."
-      );
-      return;
-    }
+  if (
+    !currentPassword ||
+    !newPassword ||
+    !confirmPassword
+  ) {
+    alert("Please fill all password fields.");
+    return;
+  }
 
-    if (newPassword !== confirmPassword) {
-      alert("New passwords do not match.");
-      return;
-    }
+  if (newPassword.length < 6) {
+    alert(
+      "New password must contain at least 6 characters."
+    );
+    return;
+  }
 
-    // Demo/localStorage password handling
-    const savedPassword =
-      localStorage.getItem("userPassword");
+  if (newPassword !== confirmPassword) {
+    alert("New passwords do not match.");
+    return;
+  }
 
-    if (
-      savedPassword &&
-      savedPassword !== currentPassword
-    ) {
-      alert("Current password is incorrect.");
-      return;
-    }
+  try {
 
-    localStorage.setItem(
-      "userPassword",
-      newPassword
+    const response = await API.put(
+      "/auth/change-password",
+      {
+        currentPassword,
+        newPassword
+      }
     );
 
+    alert(
+      response.data.message ||
+      "Password changed successfully!"
+    );
+
+    // Clear password fields
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
 
-    alert(
-      "Password changed successfully!"
+  } catch (error) {
+
+    console.error(
+      "Change password error:",
+      error
     );
-  };
 
-
+    alert(
+      error.response?.data?.message ||
+      "Failed to change password"
+    );
+  }
+};
   return (
 
     <div className="security-page">

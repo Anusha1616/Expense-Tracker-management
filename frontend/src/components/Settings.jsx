@@ -1,4 +1,5 @@
 import BackupRestore from "./BackupRestore";
+import API from "../api/api";
 
 function Settings({
   setTheme,
@@ -29,67 +30,126 @@ function Settings({
   // =========================
   // CLEAR ALL TRANSACTIONS
   // =========================
+const clearTransactions = async () => {
 
-  const clearTransactions = () => {
+  const confirmClear = window.confirm(
+    "Are you sure you want to delete ALL transactions?"
+  );
 
-    const confirmClear = window.confirm(
-      "Are you sure you want to delete ALL transactions?"
-    );
+  if (!confirmClear) {
+    return;
+  }
 
-    if (!confirmClear) {
-      return;
-    }
+  try {
+
+    // await API.delete("/expenses/all");
+    await API.delete("/expenses");
 
     setExpenses([]);
 
-    localStorage.removeItem("expenses");
-
     alert("All transactions have been deleted.");
-  };
 
+  } catch (error) {
+
+    console.error(
+      "Clear transactions error:",
+      error
+    );
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to delete transactions"
+    );
+
+  }
+};
 
   // =========================
   // CLEAR ALL BUDGETS
   // =========================
+const clearBudget = async () => {
 
-  const clearBudget = () => {
+  const confirmClear = window.confirm(
+    "Are you sure you want to delete ALL saved budgets?"
+  );
 
-    const confirmClear = window.confirm(
-      "Are you sure you want to delete ALL saved budgets?"
+  if (!confirmClear) {
+    return;
+  }
+
+  try {
+
+    const response = await API.delete("/budgets");
+
+    console.log(
+      "Budgets deleted:",
+      response.data
     );
 
-    if (!confirmClear) {
-      return;
-    }
-
+    // Remove old localStorage data if it still exists
     localStorage.removeItem("monthlyBudgets");
 
     alert("All saved budgets have been removed.");
-  };
 
+  } catch (error) {
 
+    console.error(
+      "Clear budgets error:",
+      error
+    );
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to delete budgets"
+    );
+  }
+};
   // =========================
   // RESET ALL DATA
   // =========================
 
-  const resetAllData = () => {
+ const resetAllData = async () => {
 
-    const confirmReset = window.confirm(
-      "WARNING!\n\nThis will delete all transactions and all budgets.\n\nAre you sure?"
-    );
+  const confirmReset = window.confirm(
+    "WARNING!\n\nThis will delete all transactions and all budgets.\n\nAre you sure?"
+  );
 
-    if (!confirmReset) {
-      return;
-    }
+  if (!confirmReset) {
+    return;
+  }
 
+  try {
+
+    // Delete all transactions from MongoDB
+    await API.delete("/expenses/all");
+
+    // Clear frontend transactions
     setExpenses([]);
 
-    localStorage.removeItem("expenses");
+    // Clear locally stored budgets
     localStorage.removeItem("monthlyBudgets");
 
-    alert("All expense tracker data has been reset.");
-  };
+    // Remove old localStorage transactions if any
+    localStorage.removeItem("expenses");
 
+    alert(
+      "All expense tracker data has been reset."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Reset all data error:",
+      error
+    );
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to reset all data"
+    );
+
+  }
+};
 
   // =========================
   // RETURN

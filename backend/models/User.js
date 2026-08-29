@@ -13,9 +13,28 @@ const userSchema = new mongoose.Schema(
       unique: true
     },
 
+  phone: {
+  type: String,
+  default: ""
+},
+
     password: {
       type: String,
       required: true
+    },
+
+    // =========================
+    // PASSWORD RESET OTP
+    // =========================
+
+    resetOTP: {
+      type: String,
+      default: null
+    },
+
+    resetOTPExpiry: {
+      type: Date,
+      default: null
     }
   },
   {

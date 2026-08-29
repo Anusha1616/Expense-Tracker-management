@@ -22,3 +22,61 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# ==========================================
+# FRONTEND - React / Vite
+# ==========================================
+
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# Environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+
+
+# ==========================================
+# BACKEND - Python
+# ==========================================
+
+backend/venv/
+backend/.venv/
+backend/env/
+
+backend/__pycache__/
+backend/**/__pycache__/
+*.py[cod]
+
+# Environment files
+backend/.env
+backend/.env.local
+
+# SQLite database
+backend/*.sqlite3
+backend/*.db
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+
+# Logs
+*.log
+
+
+# ==========================================
+# GENERAL
+# ==========================================
+
+.DS_Store
+Thumbs.db
+
+# VS Code settings (optional)
+.vscode/
+
+# OS temporary files
+*.tmp
+*.temp

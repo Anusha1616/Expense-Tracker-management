@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import API from "./api/api";
+
 
 import Header from "./components/Header";
 import Balance from "./components/Balance";
@@ -39,11 +41,8 @@ function App() {
   // =========================
 
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-
-    return localStorage.getItem("loggedIn") === "true";
-
-  });
-
+  return !!localStorage.getItem("token");
+});
 
   const handleLogin = () => {
 
@@ -53,22 +52,27 @@ function App() {
 
   };
 
+const handleLogout = () => {
 
-  const handleLogout = () => {
+  const confirmLogout = window.confirm(
+    "Are you sure you want to logout?"
+  );
 
-    const confirmLogout = window.confirm(
-      "Are you sure you want to logout?"
-    );
+  if (!confirmLogout) {
+    return;
+  }
 
-    if (!confirmLogout) {
-      return;
-    }
+  // Remove login information
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("loggedIn");
 
-    localStorage.removeItem("loggedIn");
+  // Clear transactions from React state
+  setExpenses([]);
 
-    setIsLoggedIn(false);
-
-  };
+  // Show login page
+  setIsLoggedIn(false);
+};
 
 
 
@@ -100,17 +104,28 @@ function App() {
   // =========================
   // EXPENSES
   // =========================
+const [expenses, setExpenses] = useState([]); 
 
-  const [expenses, setExpenses] = useState(() => {
+useEffect(() => {
+  if (!isLoggedIn) return;
 
-    const savedExpenses =
-      localStorage.getItem("expenses");
+  const fetchExpenses = async () => {
+    try {
+      const response = await API.get("/expenses");
 
-    return savedExpenses
-      ? JSON.parse(savedExpenses)
-      : [];
+      setExpenses(response.data.expenses);
 
-  });
+    } catch (error) {
+      console.error("Failed to fetch expenses:", error);
+
+      if (error.response) {
+        console.error("Backend error:", error.response.data);
+      }
+    }
+  };
+
+  fetchExpenses();
+}, [isLoggedIn]);
 
 
 
@@ -127,43 +142,48 @@ function App() {
   // SAVE EXPENSES
   // =========================
 
-  useEffect(() => {
-
-    localStorage.setItem(
-      "expenses",
-      JSON.stringify(expenses)
-    );
-
-  }, [expenses]);
 
 
 
   // =========================
   // DELETE ONE TRANSACTION
   // =========================
+const deleteExpense = async (index) => {
 
-  const deleteExpense = (index) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this transaction?"
+  );
 
-    const confirmDelete =
-      window.confirm(
-        "Are you sure you want to delete this transaction?"
-      );
+  if (!confirmDelete) {
+    return;
+  }
 
-    if (!confirmDelete) {
-      return;
-    }
+  try {
 
+    const expense = expenses[index];
 
-    const updatedExpenses =
-      expenses.filter(
-        (_, i) => i !== index
-      );
+    // Delete from MongoDB
+    await API.delete(`/expenses/${expense.id}`);
 
+    // Remove from frontend
+    const updatedExpenses = expenses.filter(
+      (_, i) => i !== index
+    );
 
     setExpenses(updatedExpenses);
 
-  };
+    alert("Transaction deleted successfully!");
 
+  } catch (error) {
+
+    console.error("Delete transaction error:", error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to delete transaction"
+    );
+  }
+};
 
 
   // =========================

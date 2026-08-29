@@ -7,13 +7,13 @@ const Expense = require("../models/Expense");
 
 const addExpense = async (req, res) => {
   try {
-
     const {
       name,
       amount,
       type,
       category,
-      date
+      date,
+      paymentMethod
     } = req.body;
 
     // Check required fields
@@ -23,14 +23,22 @@ const addExpense = async (req, res) => {
       });
     }
 
+    // Check authenticated user
+    if (!req.userId) {
+      return res.status(401).json({
+        message: "User not authenticated"
+      });
+    }
+
     // Create transaction
     const expense = await Expense.create({
       userId: req.userId,
       name,
-      amount,
+      amount: Number(amount),
       type: type || "Expense",
       category: category || "Other",
-      date: date || new Date()
+      date: date || new Date(),
+      paymentMethod: paymentMethod || "Cash"
     });
 
     res.status(201).json({
@@ -42,12 +50,12 @@ const addExpense = async (req, res) => {
         amount: expense.amount,
         type: expense.type,
         category: expense.category,
-        date: expense.date
+        date: expense.date,
+        paymentMethod: expense.paymentMethod
       }
     });
 
   } catch (error) {
-
     console.error("Add Expense Error:", error);
 
     res.status(500).json({
@@ -64,6 +72,12 @@ const addExpense = async (req, res) => {
 const getExpenses = async (req, res) => {
   try {
 
+    if (!req.userId) {
+      return res.status(401).json({
+        message: "User not authenticated"
+      });
+    }
+
     const expenses = await Expense.find({
       userId: req.userId
     }).sort({
@@ -71,16 +85,15 @@ const getExpenses = async (req, res) => {
     });
 
     res.status(200).json({
-
       expenses: expenses.map((expense) => ({
         id: expense._id,
         name: expense.name,
         amount: expense.amount,
         type: expense.type,
         category: expense.category,
-        date: expense.date
+        date: expense.date,
+        paymentMethod: expense.paymentMethod
       }))
-
     });
 
   } catch (error) {
@@ -101,6 +114,12 @@ const getExpenses = async (req, res) => {
 const getExpenseById = async (req, res) => {
   try {
 
+    if (!req.userId) {
+      return res.status(401).json({
+        message: "User not authenticated"
+      });
+    }
+
     const expense = await Expense.findOne({
       _id: req.params.id,
       userId: req.userId
@@ -120,7 +139,8 @@ const getExpenseById = async (req, res) => {
         amount: expense.amount,
         type: expense.type,
         category: expense.category,
-        date: expense.date
+        date: expense.date,
+        paymentMethod: expense.paymentMethod
       }
 
     });
@@ -143,12 +163,19 @@ const getExpenseById = async (req, res) => {
 const updateExpense = async (req, res) => {
   try {
 
+    if (!req.userId) {
+      return res.status(401).json({
+        message: "User not authenticated"
+      });
+    }
+
     const {
       name,
       amount,
       type,
       category,
-      date
+      date,
+      paymentMethod
     } = req.body;
 
     const expense = await Expense.findOne({
@@ -162,14 +189,14 @@ const updateExpense = async (req, res) => {
       });
     }
 
-    // Update only fields that are provided
+    // Update only provided fields
 
     if (name !== undefined) {
       expense.name = name;
     }
 
     if (amount !== undefined) {
-      expense.amount = amount;
+      expense.amount = Number(amount);
     }
 
     if (type !== undefined) {
@@ -184,6 +211,10 @@ const updateExpense = async (req, res) => {
       expense.date = date;
     }
 
+    if (paymentMethod !== undefined) {
+      expense.paymentMethod = paymentMethod;
+    }
+
     await expense.save();
 
     res.status(200).json({
@@ -196,7 +227,8 @@ const updateExpense = async (req, res) => {
         amount: expense.amount,
         type: expense.type,
         category: expense.category,
-        date: expense.date
+        date: expense.date,
+        paymentMethod: expense.paymentMethod
       }
 
     });
@@ -218,6 +250,12 @@ const updateExpense = async (req, res) => {
 
 const deleteExpense = async (req, res) => {
   try {
+
+    if (!req.userId) {
+      return res.status(401).json({
+        message: "User not authenticated"
+      });
+    }
 
     const expense = await Expense.findOne({
       _id: req.params.id,
@@ -249,6 +287,104 @@ const deleteExpense = async (req, res) => {
   }
 };
 
+// =====================================================
+// DELETE ALL USER EXPENSES
+// =====================================================
+
+const deleteAllExpenses = async (req, res) => {
+  try {
+
+    // Check authenticated user
+    if (!req.userId) {
+      return res.status(401).json({
+        message: "User not authenticated"
+      });
+    }
+
+    // Delete ONLY this user's transactions
+    const result = await Expense.deleteMany({
+      userId: req.userId
+    });
+
+    res.status(200).json({
+      message: "All transactions deleted successfully",
+      deletedCount: result.deletedCount
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Delete All Expenses Error:",
+      error
+    );
+
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
+};
+
+// =====================================================
+// RESTORE MULTIPLE TRANSACTIONS
+// =====================================================
+
+const restoreExpenses = async (req, res) => {
+  try {
+
+    if (!req.userId) {
+      return res.status(401).json({
+        message: "User not authenticated"
+      });
+    }
+
+    const { expenses } = req.body;
+
+    if (!Array.isArray(expenses)) {
+      return res.status(400).json({
+        message: "Invalid expenses data"
+      });
+    }
+
+    // Prepare transactions for this logged-in user
+    const transactions = expenses.map((expense) => ({
+      userId: req.userId,
+      name: expense.name,
+      amount: Number(expense.amount),
+      type: expense.type || "Expense",
+      category: expense.category || "Other",
+      date: expense.date || new Date(),
+      paymentMethod: expense.paymentMethod || "Cash"
+    }));
+
+    // Insert all transactions into MongoDB
+    const restoredExpenses =
+      await Expense.insertMany(transactions);
+
+    res.status(201).json({
+      message: "Transactions restored successfully",
+
+      expenses: restoredExpenses.map((expense) => ({
+        id: expense._id,
+        name: expense.name,
+        amount: expense.amount,
+        type: expense.type,
+        category: expense.category,
+        date: expense.date,
+        paymentMethod: expense.paymentMethod
+      }))
+    });
+  } catch (error) {
+
+    console.error(
+      "Restore Expenses Error:",
+      error
+    );
+
+    res.status(500).json({
+      message: error.message || "Server error"
+    });
+  }
+};
 
 // =====================================================
 // EXPORT
@@ -259,5 +395,7 @@ module.exports = {
   getExpenses,
   getExpenseById,
   updateExpense,
-  deleteExpense
+  deleteExpense,
+  deleteAllExpenses,
+  restoreExpenses
 };

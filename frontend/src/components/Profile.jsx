@@ -1,56 +1,105 @@
 import { useState, useEffect } from "react";
+import API from "../api/api";
 
 function Profile({ setPage }) {
 
-  const [name, setName] = useState(() => {
-    return localStorage.getItem("profileName") || "";
-  });
+const [name, setName] = useState("");
+const [email, setEmail] = useState("");
+const [phone, setPhone] = useState("");
 
-  const [email, setEmail] = useState(() => {
-    return localStorage.getItem("profileEmail") || "";
-  });
+const [loading, setLoading] = useState(true);
+const [editing, setEditing] = useState(false);
 
-  const [phone, setPhone] = useState(() => {
-    return localStorage.getItem("profilePhone") || "";
-  });
+useEffect(() => {
 
-  const [editing, setEditing] = useState(false);
+  const fetchProfile = async () => {
+
+    try {
+
+      const response =
+        await API.get("/auth/profile");
+
+      const user = response.data.user;
+
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
+
+    } catch (error) {
+
+      console.error(
+        "Failed to fetch profile:",
+        error
+      );
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to load profile"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  };
+
+  fetchProfile();
+
+}, []);
 
   // =========================
   // SAVE PROFILE
   // =========================
 
-  const saveProfile = () => {
+ const saveProfile = async () => {
 
-    if (!name.trim()) {
-      alert("Please enter your name.");
-      return;
-    }
+  if (!name.trim()) {
+    alert("Please enter your name.");
+    return;
+  }
 
-    if (!email.trim()) {
-      alert("Please enter your email.");
-      return;
-    }
+  if (!email.trim()) {
+    alert("Please enter your email.");
+    return;
+  }
 
-    localStorage.setItem(
-      "profileName",
-      name
+  try {
+
+    const response = await API.put(
+      "/auth/profile",
+      {
+        name: name,
+        email: email,
+        phone: phone
+      }
     );
 
-    localStorage.setItem(
-      "profileEmail",
-      email
-    );
+    const user = response.data.user;
 
-    localStorage.setItem(
-      "profilePhone",
-      phone
-    );
+    // Update displayed values with backend response
+    setName(user.name || "");
+    setEmail(user.email || "");
+    setPhone(user.phone || "");
 
     setEditing(false);
 
     alert("Profile updated successfully!");
-  };
+
+  } catch (error) {
+
+    console.error(
+      "Update profile error:",
+      error
+    );
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to update profile"
+    );
+
+  }
+};
 
 
   return (
