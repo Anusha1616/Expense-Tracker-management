@@ -1,96 +1,64 @@
-# Logs
-logs
-*.log
+# ==========================================
+# NODE / NPM
+# ==========================================
+
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# ==========================================
+# BUILD FILES
+# ==========================================
+
+dist/
+dist-ssr/
+build/
 
 
 # ==========================================
-# FRONTEND - React / Vite
+# ENVIRONMENT / SECRETS
 # ==========================================
 
-frontend/node_modules/
-frontend/dist/
-frontend/build/
+.env
+.env.local
+.env.development
+.env.production
 
-# Environment files
 frontend/.env
 frontend/.env.local
 frontend/.env.development
 frontend/.env.production
 
-
-# ==========================================
-# BACKEND - Python
-# ==========================================
-
-backend/venv/
-backend/.venv/
-backend/env/
-
-backend/__pycache__/
-backend/**/__pycache__/
-*.py[cod]
-
-# Environment files
 backend/.env
 backend/.env.local
 
-# SQLite database
-backend/*.sqlite3
-backend/*.db
 
-# Python cache
-.pytest_cache/
-.mypy_cache/
+# ==========================================
+# EDITOR
+# ==========================================
 
-# Logs
-*.log
+.vscode/
+!.vscode/extensions.json
+.idea/
 
 
 # ==========================================
-# GENERAL
+# OS FILES
 # ==========================================
 
 .DS_Store
 Thumbs.db
-
-# VS Code settings (optional)
-.vscode/
-
-# OS temporary files
 *.tmp
 *.temp
-
-.env
-.env.local
-.env.production
-node_modules/
-dist/
+*.sw?
 
 
-# Capacitor Android generated files
-frontend/android/.gradle/
-frontend/android/build/
-frontend/android/app/build/
-frontend/android/app/src/main/assets/public/
-frontend/android/app/src/main/assets/public/assets/
+# ==========================================
+# LOGS
+# ==========================================
+
+*.log

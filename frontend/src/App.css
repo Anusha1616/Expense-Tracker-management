@@ -8261,3 +8261,189 @@ footer{
   }
 
 }
+
+/* MOBILE WIDTH IMPROVEMENT */
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .dashboard,
+  .transactions-page,
+  .budget-page,
+  .reports-page,
+  .profile-page,
+  .settings-page,
+  .security-page {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .balance-card,
+  .income-card,
+  .expense-card,
+  .transaction-card,
+  .budget-card,
+  .budget-input-card,
+  .budget-progress-card,
+  .profile-card,
+  .settings-card,
+  .security-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+
+@media (max-width: 400px) {
+  .container {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .dashboard,
+  .transactions-page,
+  .budget-page,
+  .reports-page {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+}
+
+/* MOBILE DASHBOARD HEADER FIX */
+@media (max-width: 600px) {
+  .dashboard h1 {
+    font-size: 32px;
+    line-height: 1.15;
+    text-align: center;
+    margin: 15px 0 12px;
+    padding: 0 10px;
+  }
+
+  .dashboard h1:first-letter {
+    font-size: 30px;
+  }
+
+  .dashboard > p {
+    font-size: 15px;
+    text-align: center;
+    line-height: 1.4;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .dashboard h1 {
+    font-size: 28px;
+    line-height: 1.15;
+    margin-top: 15px;
+  }
+
+  .dashboard > p {
+    font-size: 14px;
+  }
+}
+
+
+/* =========================================
+   BUDGET HISTORY - MOBILE FIX
+   ========================================= */
+
+.budget-history-row {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.history-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .budget-history-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    padding: 18px;
+  }
+
+  .history-month {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .history-amount {
+    width: 100%;
+    text-align: center;
+  }
+
+  .history-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .history-actions button {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 400px) {
+  .budget-history-row {
+    padding: 15px 12px;
+    gap: 12px;
+  }
+
+  .history-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .history-actions button {
+    width: 100%;
+  }
+}
+
+
+/* Fix Dashboard title on small mobile screens */
+@media (max-width: 600px) {
+  .dashboard h1 {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 10px;
+    margin: 25px auto 10px;
+    text-align: center;
+    font-size: 32px;
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+}
+
+@media (max-width: 400px) {
+  .dashboard h1 {
+    font-size: 28px;
+    line-height: 1.2;
+    padding: 0 5px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard p {
+    max-width: 100%;
+    padding: 0 10px;
+    text-align: center;
+    line-height: 1.5;
+  }
+}
