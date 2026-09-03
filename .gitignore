@@ -86,3 +86,11 @@ Thumbs.db
 .env.production
 node_modules/
 dist/
+
+
+# Capacitor Android generated files
+frontend/android/.gradle/
+frontend/android/build/
+frontend/android/app/build/
+frontend/android/app/src/main/assets/public/
+frontend/android/app/src/main/assets/public/assets/
