@@ -10,13 +10,15 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      lowercase: true,
+      trim: true
     },
 
-  phone: {
-  type: String,
-  default: ""
-},
+    phone: {
+      type: String,
+      default: ""
+    },
 
     password: {
       type: String,
@@ -35,6 +37,11 @@ const userSchema = new mongoose.Schema(
     resetOTPExpiry: {
       type: Date,
       default: null
+    },
+
+    resetOTPVerified: {
+      type: Boolean,
+      default: false
     }
   },
   {

@@ -1,12 +1,14 @@
 const express = require("express");
-
 const router = express.Router();
 
 const {
   registerUser,
   login,
   forgotPassword,
+  resendPasswordOTP,
   verifyOTP,
+  verifyRegistrationOTP,
+  resendRegistrationOTP,
   resetPassword,
   getProfile,
   updateProfile,
@@ -15,76 +17,37 @@ const {
 
 const authMiddleware = require("../middleware/authMiddleware");
 
-
-// =========================
-// REGISTER
-// =========================
-
+// Registration
 router.post("/register", registerUser);
 
+// Registration email OTP verification
+router.post("/verify-registration-otp", verifyRegistrationOTP);
+// Resend registration OTP//
+router.post("/resend-registration-otp", resendRegistrationOTP);
 
-// =========================
-// LOGIN
-// =========================
-
+// Login
 router.post("/login", login);
 
+// Forgot password
+router.post("/forgot-password", forgotPassword);
 
-// =========================
-// FORGOT PASSWORD
-// Send OTP to email
-// =========================
-
+// Resend password reset OTP
 router.post(
-  "/forgot-password",
-  forgotPassword
+  "/resend-password-otp",
+  resendPasswordOTP
 );
 
+// Forgot password OTP verification
+router.post("/verify-otp", verifyOTP);
 
-// =========================
-// VERIFY OTP
-// =========================
+// Reset password
+router.post("/reset-password", resetPassword);
 
-router.post(
-  "/verify-otp",
-  verifyOTP
-);
+// Profile
+router.get("/profile", authMiddleware, getProfile);
+router.put("/profile", authMiddleware, updateProfile);
 
-
-// =========================
-// RESET PASSWORD
-// =========================
-
-router.post(
-  "/reset-password",
-  resetPassword
-);
-
-// =========================
-// PROFILE
-// =========================
-
-router.get(
-  "/profile",
-  authMiddleware,
-  getProfile
-);
-
-router.put(
-  "/profile",
-  authMiddleware,
-  updateProfile
-);
-
-// =========================
-// CHANGE PASSWORD
-// =========================
-
-router.put(
-  "/change-password",
-  authMiddleware,
-  changePassword
-);
-
+// Change password
+router.put("/change-password", authMiddleware, changePassword);
 
 module.exports = router;

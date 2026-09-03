@@ -2,11 +2,11 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const transporter = require("../config/mail");
+const PendingUser = require("../models/PendingUser");
 
 // =========================
 // REGISTER USER
 // =========================
-
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -15,6 +15,13 @@ const registerUser = async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({
         message: "Please enter all fields"
+      });
+    }
+
+    // Check password length
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters"
       });
     }
 
@@ -27,35 +34,78 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Hash password
+    // Generate 6 digit OTP
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    // OTP expires after 5 minutes
+    const otpExpiry = Date.now() + 5 * 60 * 1000;
+
+    // Hash password before temporarily storing it
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
-    const user = await User.create({
+    // Remove any previous pending registration
+    await PendingUser.deleteOne({ email });
+
+    // Store registration details temporarily
+    await PendingUser.create({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      otp,
+      otpExpiry
     });
 
-    // Send response
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email
-      }
+    // Send OTP to email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Expense Tracker - Email Verification OTP",
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          
+          <h2>💰 Expense Tracker</h2>
+
+          <p>Hello ${name},</p>
+
+          <p>
+            Thank you for creating an Expense Tracker account.
+          </p>
+
+          <p>
+            Your email verification OTP is:
+          </p>
+
+          <h1 style="letter-spacing: 5px;">
+            ${otp}
+          </h1>
+
+          <p>
+            This OTP will expire in <strong>5 minutes</strong>.
+          </p>
+
+          <p>
+            If you did not request this account, please ignore this email.
+          </p>
+
+        </div>
+      `
+    });
+
+    // Account is NOT created yet
+    res.status(200).json({
+      message: "OTP sent successfully. Please verify your email."
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("Registration OTP Error:", error);
 
     res.status(500).json({
-      message: "Server error"
+      message: "Unable to send verification OTP"
     });
   }
 };
-
 
 // =========================
 // LOGIN USER
@@ -351,19 +401,22 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    // Generate 6 digit OTP
-    const otp = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+   // Generate 6 digit OTP
+const otp = Math.floor(
+  100000 + Math.random() * 900000
+).toString();
 
-    // OTP expires after 5 minutes
-    const otpExpiry = Date.now() + 5 * 60 * 1000;
+// OTP expires after 5 minutes
+const otpExpiry = Date.now() + 5 * 60 * 1000;
 
-    // Store OTP temporarily
-    user.resetOTP = otp;
-    user.resetOTPExpiry = otpExpiry;
+// Hash OTP before storing it
+const hashedOTP = await bcrypt.hash(otp, 10);
 
-    await user.save();
+// Store hashed OTP temporarily
+user.resetOTP = hashedOTP;
+user.resetOTPExpiry = otpExpiry;
+
+await user.save();
 
     // Send OTP email
     await transporter.sendMail({
@@ -414,6 +467,96 @@ const forgotPassword = async (req, res) => {
 
     res.status(500).json({
       message: "Unable to send OTP"
+    });
+  }
+};
+
+// =========================
+// RESEND PASSWORD RESET OTP
+// =========================
+
+const resendPasswordOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check email
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required"
+      });
+    }
+
+    // Find user
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    // Generate new 6 digit OTP
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    // OTP expires after 5 minutes
+    const otpExpiry = Date.now() + 5 * 60 * 1000;
+
+    // Hash OTP before storing
+    const hashedOTP = await bcrypt.hash(otp, 10);
+
+    // Store new OTP
+    user.resetOTP = hashedOTP;
+    user.resetOTPExpiry = otpExpiry;
+
+    // Reset verification status
+    user.resetOTPVerified = false;
+
+    await user.save();
+
+    // Send new OTP
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Expense Tracker - New Password Reset OTP",
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+
+          <h2>💰 Expense Tracker</h2>
+
+          <p>You requested a new password reset OTP.</p>
+
+          <p>Your new OTP is:</p>
+
+          <h1 style="letter-spacing: 5px;">
+            ${otp}
+          </h1>
+
+          <p>
+            This OTP will expire in <strong>5 minutes</strong>.
+          </p>
+
+          <p>
+            If you did not request this OTP, please ignore this email.
+          </p>
+
+        </div>
+      `
+    });
+
+    res.status(200).json({
+      message: "New OTP sent successfully"
+    });
+
+  } catch (error) {
+    console.error(
+      "Resend Password OTP Error:",
+      error
+    );
+
+    res.status(500).json({
+      message: "Unable to resend OTP"
     });
   }
 };
@@ -471,20 +614,28 @@ const verifyOTP = async (req, res) => {
       });
 
     }
+// Compare entered OTP with hashed OTP
+// Compare entered OTP with hashed OTP
+const isOTPMatch = await bcrypt.compare(
+  otp,
+  user.resetOTP
+);
 
-    // Compare OTP
-    if (user.resetOTP !== otp) {
+if (!isOTPMatch) {
+  return res.status(400).json({
+    message: "Invalid OTP"
+  });
+}
 
-      return res.status(400).json({
-        message: "Invalid OTP"
-      });
+// Mark OTP as verified
+user.resetOTPVerified = true;
 
-    }
+await user.save();
 
-    // OTP is correct
-    res.status(200).json({
-      message: "OTP verified successfully"
-    });
+// OTP is correct
+res.status(200).json({
+  message: "OTP verified successfully"
+});
 
   } catch (error) {
 
@@ -534,13 +685,24 @@ const resetPassword = async (req, res) => {
     }
 
     // Check OTP
-    if (user.resetOTP !== otp) {
+    // Compare entered OTP with hashed OTP
+const isOTPMatch = await bcrypt.compare(
+  otp,
+  user.resetOTP
+);
 
-      return res.status(400).json({
-        message: "Invalid OTP"
-      });
+if (!isOTPMatch) {
+  return res.status(400).json({
+    message: "Invalid OTP"
+  });
+}
 
-    }
+// Check whether OTP was verified first
+if (!user.resetOTPVerified) {
+  return res.status(400).json({
+    message: "Please verify OTP first"
+  });
+}
 
     // Check expiry
     if (
@@ -572,8 +734,10 @@ const resetPassword = async (req, res) => {
     user.password = hashedPassword;
 
     // Remove OTP
-    user.resetOTP = undefined;
-    user.resetOTPExpiry = undefined;
+   // Remove OTP after successful password reset
+user.resetOTP = undefined;
+user.resetOTPExpiry = undefined;
+user.resetOTPVerified = false;
 
     await user.save();
 
@@ -595,6 +759,158 @@ const resetPassword = async (req, res) => {
 
 
 // =========================
+// VERIFY REGISTRATION OTP
+// =========================
+
+const verifyRegistrationOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    // Check fields
+    if (!email || !otp) {
+      return res.status(400).json({
+        message: "Email and OTP are required"
+      });
+    }
+
+    // Find pending registration
+    const pendingUser = await PendingUser.findOne({ email });
+
+    if (!pendingUser) {
+      return res.status(404).json({
+        message: "Registration not found. Please register again."
+      });
+    }
+
+    // Check OTP expiry
+    if (Date.now() > pendingUser.otpExpiry) {
+      await PendingUser.deleteOne({ email });
+
+      return res.status(400).json({
+        message: "OTP has expired. Please register again."
+      });
+    }
+
+    // Check OTP
+    if (pendingUser.otp !== otp) {
+      return res.status(400).json({
+        message: "Invalid OTP"
+      });
+    }
+
+    // Create actual user account
+    const user = await User.create({
+      name: pendingUser.name,
+      email: pendingUser.email,
+      password: pendingUser.password
+    });
+
+    // Delete temporary registration
+    await PendingUser.deleteOne({ email });
+
+    // Success response
+    res.status(201).json({
+      message: "Email verified and account created successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    console.error("Registration OTP verification error:", error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
+};
+
+// =========================
+// RESEND REGISTRATION OTP
+// =========================
+
+const resendRegistrationOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check email
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required"
+      });
+    }
+
+    // Find pending registration
+    const pendingUser = await PendingUser.findOne({ email });
+
+    if (!pendingUser) {
+      return res.status(404).json({
+        message: "Registration not found. Please register again."
+      });
+    }
+
+    // Generate new 6 digit OTP
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    // OTP expires after 5 minutes
+    const otpExpiry = Date.now() + 5 * 60 * 1000;
+
+    // Update pending user
+    pendingUser.otp = otp;
+    pendingUser.otpExpiry = otpExpiry;
+
+    await pendingUser.save();
+
+    // Send new OTP
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Expense Tracker - New Email Verification OTP",
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+
+          <h2>💰 Expense Tracker</h2>
+
+          <p>Hello ${pendingUser.name},</p>
+
+          <p>
+            Your new email verification OTP is:
+          </p>
+
+          <h1 style="letter-spacing: 5px;">
+            ${otp}
+          </h1>
+
+          <p>
+            This OTP will expire in <strong>5 minutes</strong>.
+          </p>
+
+          <p>
+            If you did not request this OTP, please ignore this email.
+          </p>
+
+        </div>
+      `
+    });
+
+    res.status(200).json({
+      message: "New OTP sent successfully."
+    });
+
+  } catch (error) {
+    console.error("Resend registration OTP error:", error);
+
+    res.status(500).json({
+      message: "Unable to resend OTP"
+    });
+  }
+};
+
+// =========================
 // EXPORT
 // =========================
 module.exports = {
@@ -602,6 +918,8 @@ module.exports = {
   login,
   forgotPassword,
   verifyOTP,
+  verifyRegistrationOTP,
+  resendRegistrationOTP,
   resetPassword,
   getProfile,
   updateProfile,
