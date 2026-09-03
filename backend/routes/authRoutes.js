@@ -3,16 +3,16 @@ const router = express.Router();
 
 const {
   registerUser,
-  login,
+  loginUser,
+  getProfile,
+  updateProfile,
+  changePassword,
   forgotPassword,
   resendPasswordOTP,
   verifyOTP,
-  verifyRegistrationOTP,
-  resendRegistrationOTP,
   resetPassword,
-  getProfile,
-  updateProfile,
-  changePassword
+  verifyRegistrationOTP,
+  resendRegistrationOTP
 } = require("../controllers/authController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -26,10 +26,11 @@ router.post("/verify-registration-otp", verifyRegistrationOTP);
 router.post("/resend-registration-otp", resendRegistrationOTP);
 
 // Login
-router.post("/login", login);
+router.post("/login", loginUser);
 
 // Forgot password
 router.post("/forgot-password", forgotPassword);
+//console.log("resendPasswordOTP type:", typeof resendPasswordOTP);
 
 // Resend password reset OTP
 router.post(
