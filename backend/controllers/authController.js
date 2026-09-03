@@ -39,8 +39,8 @@ const registerUser = async (req, res) => {
       100000 + Math.random() * 900000
     ).toString();
 
-    // OTP expires after 5 minutes
-    const otpExpiry = Date.now() + 5 * 60 * 1000;
+    // OTP expires after 1 minute
+    const otpExpiry = Date.now() + 1 * 60 * 1000;
 
     // Hash password before temporarily storing it
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -856,8 +856,8 @@ const resendRegistrationOTP = async (req, res) => {
       100000 + Math.random() * 900000
     ).toString();
 
-    // OTP expires after 5 minutes
-    const otpExpiry = Date.now() + 5 * 60 * 1000;
+    // OTP expires after 1 minute
+    const otpExpiry = Date.now() + 1 * 60 * 1000;
 
     // Update pending user
     pendingUser.otp = otp;

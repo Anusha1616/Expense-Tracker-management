@@ -1,36 +1,65 @@
+import { useState } from "react";
+
 function Sidebar({ setPage }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handlePageChange = (page) => {
+    setPage(page);
+    setIsOpen(false);
+  };
+
   return (
-    <div className="sidebar">
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        className="mobile-menu-btn"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
 
-      <h2 className="logo">
-        💰 Expense Tracker
-      </h2>
+      {/* Overlay */}
+      {isOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setIsOpen(false)}
+        ></div>
+      )}
 
-      <ul>
+      {/* Sidebar */}
+      <div className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
 
-        <li onClick={() => setPage("dashboard")}>
-          🏠 Dashboard
-        </li>
+        <h2 className="logo">
+          💰 Expense Tracker
+        </h2>
 
-        <li onClick={() => setPage("transactions")}>
-          💳 Transactions
-        </li>
+        <ul>
 
-        <li onClick={() => setPage("reports")}>
-          📊 Reports/Charts
-        </li>
+          <li onClick={() => handlePageChange("dashboard")}>
+            🏠 Dashboard
+          </li>
 
-        <li onClick={() => setPage("budget")}>
-          💰 Budget
-        </li>
+          <li onClick={() => handlePageChange("transactions")}>
+            💳 Transactions
+          </li>
 
-        <li onClick={() => setPage("settings")}>
-          ⚙️ Settings
-        </li>
+          <li onClick={() => handlePageChange("reports")}>
+            📊 Reports/Charts
+          </li>
 
-      </ul>
+          <li onClick={() => handlePageChange("budget")}>
+            💰 Budget
+          </li>
 
-    </div>
+          <li onClick={() => handlePageChange("settings")}>
+            ⚙️ Settings
+          </li>
+
+        </ul>
+
+      </div>
+    </>
   );
 }
 

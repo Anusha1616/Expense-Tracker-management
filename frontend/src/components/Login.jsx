@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import API from "../api/api";
+import Register from "./Register";
+import VerifyRegistration from "./VerifyRegistration";
 
 function Login({ onLogin }) {
   // =========================
@@ -15,18 +18,94 @@ function Login({ onLogin }) {
 
   const [loading, setLoading] = useState(false);
 
+  const [resendCooldown, setResendCooldown] = useState(0);
+
   // =========================
   // FORGOT PASSWORD STATES
   // =========================
 
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+
+  const [showRegistrationOTP,
+  setShowRegistrationOTP] =
+  useState(false);
+
+const [registrationEmail,
+  setRegistrationEmail] =
+  useState("");
 
   const [forgotEmail, setForgotEmail] = useState("");
   const [otp, setOtp] = useState("");
+  const [otpTimeLeft, setOtpTimeLeft] = useState(0);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [resetStep, setResetStep] = useState("email");
+
+
+  // =========================
+// OTP COUNTDOWN TIMER
+// =========================
+
+useEffect(() => {
+  if (resetStep !== "otp" || otpTimeLeft <= 0) {
+    return;
+  }
+
+  const timer = setInterval(() => {
+    setOtpTimeLeft((prev) => {
+      if (prev <= 1) {
+        clearInterval(timer);
+        return 0;
+      }
+
+      return prev - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [resetStep, otpTimeLeft]);
+
+
+
+  // handle register login//
+
+  const handleRegister = async (name, email, password) => {
+  try {
+    setLoading(true);
+
+    const response = await API.post("/auth/register", {
+      name,
+      email,
+      password
+    });
+alert(response.data.message);
+
+setRegistrationEmail(email);
+
+setShowRegister(false);
+
+setShowRegistrationOTP(true);
+
+  } catch (error) {
+    console.error("Register error:", error);
+
+    if (error.response) {
+      alert(
+        error.response.data.message ||
+        "Registration failed."
+      );
+    } else {
+      alert(
+        "Cannot connect to server. Please make sure the backend is running."
+      );
+    }
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   // =========================
   // NORMAL LOGIN
@@ -89,50 +168,56 @@ function Login({ onLogin }) {
   // SEND OTP
   // =========================
 
-  const handleSendOTP = async () => {
-    if (!forgotEmail) {
-      alert("Please enter your email.");
-      return;
-    }
+ const handleSendOTP = async () => {
+  if (!forgotEmail) {
+    alert("Please enter your email.");
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const response = await API.post(
-        "/auth/forgot-password",
-        {
-          email: forgotEmail,
+    const response = await axios.post(
+      "https://expense-tracker-management-sw2z.vercel.app/api/auth/forgot-password",
+      {
+        email: forgotEmail
+      },
+      {
+        headers: {
+          "Content-Type": "application/json"
         }
+      }
+    );
+
+    alert(
+      response.data.message ||
+      "OTP sent successfully!"
+    );
+
+    setResetStep("otp");
+    setOtp("");
+    setOtpTimeLeft(60); // 1 minute countdown
+
+  } catch (error) {
+    console.error("Send OTP Error:", error);
+
+    if (error.response) {
+      alert(
+        error.response.data.message ||
+        "Unable to send OTP."
       );
-
-      console.log("OTP response:", response.data);
-
-      // Move to OTP screen
-      setResetStep("otp");
+    } else {
+      console.error("Network error:", error.message);
 
       alert(
-        response.data.message ||
-        "OTP sent successfully!"
+        "Cannot connect to server. Please try again."
       );
-
-    } catch (error) {
-      console.error("OTP error:", error);
-
-      if (error.response) {
-        alert(
-          error.response.data.message ||
-          "Unable to send OTP."
-        );
-      } else {
-        alert(
-          "Cannot connect to server. Please make sure the backend is running."
-        );
-      }
-
-    } finally {
-      setLoading(false);
     }
-  };
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   // =========================
   // VERIFY OTP
@@ -194,6 +279,70 @@ function Login({ onLogin }) {
       setLoading(false);
     }
   };
+
+
+  // =========================
+// RESEND PASSWORD RESET OTP
+// =========================
+
+const handleResendOTP = async () => {
+  if (resendCooldown > 0) {
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const response = await API.post(
+      "/auth/resend-password-otp",
+      {
+        email: forgotEmail
+      }
+    );
+
+    // Clear old OTP
+    setOtp("");
+
+    alert(
+      response.data.message ||
+      "New OTP sent successfully!"
+    );
+
+    // Start 60 second cooldown
+    setResendCooldown(60);
+
+    const countdown = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdown);
+          return 0;
+        }
+
+        return prev - 1;
+      });
+    }, 1000);
+
+  } catch (error) {
+    console.error(
+      "Resend OTP error:",
+      error
+    );
+
+    if (error.response) {
+      alert(
+        error.response.data.message ||
+        "Unable to resend OTP."
+      );
+    } else {
+      alert(
+        "Cannot connect to server."
+      );
+    }
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   // =========================
   // RESET PASSWORD
@@ -273,6 +422,41 @@ function Login({ onLogin }) {
     }
   };
 
+// show registration OTP page//
+if (showRegistrationOTP) {
+  return (
+    <VerifyRegistration
+      email={registrationEmail}
+      loading={loading}
+      setLoading={setLoading}
+      onVerified={() => {
+        alert(
+          "Account created successfully!"
+        );
+
+        setShowRegistrationOTP(false);
+      }}
+      onBackToRegister={() => {
+        setShowRegistrationOTP(false);
+        setShowRegister(true);
+      }}
+    />
+  );
+}
+
+  // =========================
+// REGISTER PAGE
+// =========================
+
+if (showRegister) {
+  return (
+    <Register
+      onRegister={handleRegister}
+      onBackToLogin={() => setShowRegister(false)}
+      loading={loading}
+    />
+  );
+}
   // =========================
   // FORGOT PASSWORD PAGE
   // =========================
@@ -306,14 +490,15 @@ function Login({ onLogin }) {
                 Email
               </label>
 
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={forgotEmail}
-                onChange={(e) =>
-                  setForgotEmail(e.target.value)
-                }
-              />
+             <input
+  type="email"
+  placeholder="Enter your email"
+  value={forgotEmail}
+  autoComplete="off"
+  onChange={(e) =>
+    setForgotEmail(e.target.value)
+  }
+/>
 
               <button
                 type="button"
@@ -360,6 +545,17 @@ function Login({ onLogin }) {
                 }
               />
 
+              <p style={{ textAlign: "center", margin: "10px 0" }}>
+  {otpTimeLeft > 0 ? (
+    <>⏳ OTP expires in <strong>
+      {Math.floor(otpTimeLeft / 60)}:
+      {String(otpTimeLeft % 60).padStart(2, "0")}
+    </strong></>
+  ) : (
+    <strong>⚠️ OTP has expired</strong>
+  )}
+</p>
+
               <button
                 type="button"
                 onClick={handleVerifyOTP}
@@ -370,12 +566,24 @@ function Login({ onLogin }) {
                   : "✅ Verify OTP"}
               </button>
 
+
+              <button
+  type="button"
+  onClick={handleResendOTP}
+  disabled={loading || resendCooldown > 0}
+>
+  {resendCooldown > 0
+    ? `📩 Resend OTP (${resendCooldown}s)`
+    : "📩 Resend OTP"}
+</button>
+
               <button
                 type="button"
                 className="secondary-button"
                 onClick={() => {
                   setResetStep("email");
                   setOtp("");
+                  setResendCooldown(0);
                 }}
               >
                 🔙 Change Email
@@ -397,14 +605,15 @@ function Login({ onLogin }) {
                 New Password
               </label>
 
-              <input
-                type="password"
-                placeholder="Enter new password"
-                value={newPassword}
-                onChange={(e) =>
-                  setNewPassword(e.target.value)
-                }
-              />
+             <input
+  type="password"
+  placeholder="Enter new password"
+  value={newPassword}
+  autoComplete="new-password"
+  onChange={(e) =>
+    setNewPassword(e.target.value)
+  }
+/>
 
               <label>
                 Confirm Password
@@ -523,6 +732,13 @@ function Login({ onLogin }) {
             </button>
 
           </div>
+
+          <p>
+  Don't have an account?{" "}
+  <button type="button" onClick={() => setShowRegister(true)}>
+    Create Account
+  </button>
+</p>
 
           {/* LOGIN BUTTON */}
 

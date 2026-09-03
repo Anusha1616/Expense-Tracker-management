@@ -6430,3 +6430,1834 @@ footer{
 @media (max-width: 400px) {
   /* smaller padding/fonts */
 }
+
+
+
+/* =====================================================
+   LOGIN / AUTHENTICATION PAGE
+   ===================================================== */
+
+.login-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px;
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(circle at top left, #dbeafe 0%, transparent 35%),
+    radial-gradient(circle at bottom right, #ede9fe 0%, transparent 35%),
+    #f8fafc;
+}
+
+
+/* =========================
+   LOGIN CARD
+   ========================= */
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  padding: 40px;
+
+  border-radius: 24px;
+
+  border: 1px solid #e2e8f0;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.12);
+
+  box-sizing: border-box;
+
+  text-align: center;
+
+  animation: loginCardAppear 0.4s ease;
+}
+
+
+/* =========================
+   CARD ANIMATION
+   ========================= */
+
+@keyframes loginCardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================
+   TITLE
+   ========================= */
+
+.login-card h1 {
+  margin: 0 0 12px;
+
+  font-size: 32px;
+  font-weight: 800;
+
+  color: #0f172a;
+
+  letter-spacing: -0.5px;
+}
+
+
+/* =========================
+   LOGIN HEADING
+   ========================= */
+
+.login-card h2 {
+  margin: 0 0 8px;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  color: #1e293b;
+}
+
+
+/* =========================
+   DESCRIPTION
+   ========================= */
+
+.login-card > p {
+  margin: 0 0 28px;
+
+  color: #64748b;
+
+  font-size: 15px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================
+   FORM
+   ========================= */
+
+.login-card form {
+  margin-top: 0;
+
+  width: 100%;
+}
+
+
+/* =========================
+   LABELS
+   ========================= */
+
+.login-card form label,
+.login-card > label {
+  display: block;
+
+  text-align: left;
+
+  margin: 0 0 8px;
+
+  color: #334155;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+
+/* =========================
+   INPUTS
+   ========================= */
+
+.login-card input {
+  width: 100%;
+
+  padding: 14px 16px;
+
+  margin: 0 0 20px;
+
+  box-sizing: border-box;
+
+  border: 1.5px solid #cbd5e1;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+
+  color: #0f172a;
+
+  font-size: 16px;
+
+  outline: none;
+
+  transition: all 0.2s ease;
+}
+
+
+/* Input focus */
+
+.login-card input:focus {
+  border-color: #2563eb;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.10);
+}
+
+
+/* Placeholder */
+
+.login-card input::placeholder {
+  color: #94a3b8;
+}
+
+
+/* =========================
+   MAIN LOGIN BUTTON
+   ========================= */
+
+.login-card form > button[type="submit"] {
+  width: 100%;
+
+  padding: 14px;
+
+  margin-top: 5px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #4f46e5
+  );
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+
+  box-shadow:
+    0 6px 15px rgba(37, 99, 235, 0.20);
+}
+
+
+.login-card form > button[type="submit"]:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 22px rgba(37, 99, 235, 0.25);
+}
+
+
+.login-card form > button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+
+/* =========================
+   DISABLED BUTTON
+   ========================= */
+
+.login-card button:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* =========================
+   FORGOT PASSWORD
+   ========================= */
+
+.login-card .forgot-password {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-top: -10px;
+
+  margin-bottom: 18px;
+}
+
+
+.login-card .forgot-password button {
+  width: auto;
+
+  padding: 0;
+
+  margin: 0;
+
+  background: none;
+
+  color: #2563eb;
+
+  border: none;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+.login-card .forgot-password button:hover {
+  background: none;
+
+  color: #1d4ed8;
+
+  text-decoration: underline;
+}
+
+
+/* =========================
+   CREATE ACCOUNT TEXT
+   ========================= */
+
+.login-card form > p {
+  margin: 22px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+
+/* Create Account button */
+
+.login-card form > p button {
+  width: auto;
+
+  padding: 0;
+
+  margin: 0;
+
+  background: none;
+
+  color: #2563eb;
+
+  border: none;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+.login-card form > p button:hover {
+  background: none;
+
+  color: #1d4ed8;
+
+  text-decoration: underline;
+}
+
+
+/* =====================================================
+   FORGOT PASSWORD PAGE
+   ===================================================== */
+
+.login-card > p strong {
+  color: #2563eb;
+
+  word-break: break-word;
+}
+
+
+/* Secondary buttons */
+
+.login-card .secondary-button {
+  width: 100%;
+
+  padding: 12px;
+
+  margin-top: 12px;
+
+  border: 1px solid #cbd5e1;
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+
+  color: #475569;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+
+.login-card .secondary-button:hover {
+  background: #f1f5f9;
+
+  border-color: #94a3b8;
+}
+
+
+/* Forgot password normal buttons */
+
+.login-card > button:not(.secondary-button) {
+  width: 100%;
+
+  padding: 13px;
+
+  margin-top: 8px;
+
+  border: none;
+
+  border-radius: 11px;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #4f46e5
+  );
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+
+.login-card > button:not(.secondary-button):hover {
+  transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   OTP TIMER
+   ===================================================== */
+
+.login-card p strong {
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .login-page {
+    padding: 20px 15px;
+  }
+
+  .login-card {
+    max-width: 100%;
+
+    padding: 30px 22px;
+
+    border-radius: 20px;
+  }
+
+  .login-card h1 {
+    font-size: 27px;
+  }
+
+  .login-card h2 {
+    font-size: 21px;
+  }
+
+  .login-card input {
+    padding: 13px 14px;
+  }
+
+}
+
+
+/* Very small screens */
+
+@media (max-width: 380px) {
+
+  .login-card {
+    padding: 25px 18px;
+  }
+
+  .login-card h1 {
+    font-size: 24px;
+  }
+
+}
+
+
+
+/* =====================================================
+   RESPONSIVE SIDEBAR
+   ===================================================== */
+
+/* Mobile menu button */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  width: auto;
+  padding: 10px 14px;
+  font-size: 24px;
+  background: #1f2937;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1002;
+}
+
+/* Sidebar overlay */
+.sidebar-overlay {
+  display: none;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 900px) {
+
+  .sidebar {
+    width: 210px;
+    min-width: 210px;
+    padding: 20px 15px;
+  }
+
+  .logo {
+    font-size: 22px;
+  }
+
+  .sidebar ul li {
+    font-size: 16px;
+    padding: 13px;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  /* Show hamburger */
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  /* Sidebar hidden by default */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+
+    width: 260px;
+    min-width: 260px;
+    height: 100vh;
+
+    padding: 25px 20px;
+
+    z-index: 1001;
+
+    transition: left 0.3s ease;
+
+    overflow-y: auto;
+  }
+
+  /* Open sidebar */
+  .sidebar.sidebar-open {
+    left: 0;
+  }
+
+  /* Dark overlay */
+  .sidebar-overlay {
+    display: block;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100vh;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    z-index: 1000;
+  }
+
+  /* Main app becomes normal mobile layout */
+  .app {
+    display: block;
+    min-height: 100vh;
+  }
+
+  /* Remove desktop fixed width */
+  .container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 70px 15px 20px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+}
+
+
+/* =====================================================
+   STEP 2 - DASHBOARD RESPONSIVE
+   ===================================================== */
+
+/* Dashboard */
+.dashboard,
+.dashboard-content {
+  width: 100%;
+  max-width: 1050px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Dashboard summary cards */
+.balance-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* Prevent cards from overflowing */
+.balance-container > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Recent transactions */
+.recent-transactions {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Budget alert */
+.budget-exceeded,
+.budget-warning,
+.budget-success {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 1024px) {
+
+  .balance-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .dashboard {
+    max-width: 100%;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .dashboard {
+    width: 100%;
+    padding: 0;
+  }
+
+  .balance-container {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .balance-card,
+  .income-card,
+  .expense-card,
+  .transaction-card {
+    width: 100%;
+    min-width: 0;
+    padding: 20px;
+  }
+
+  .balance-card p,
+  .income-card p,
+  .expense-card p,
+  .transaction-card p {
+    font-size: 24px;
+  }
+
+  .recent-transactions {
+    padding: 18px;
+    margin-top: 18px;
+  }
+
+  .recent-header {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+   ===================================================== */
+
+@media (max-width: 400px) {
+
+  .balance-card,
+  .income-card,
+  .expense-card,
+  .transaction-card {
+    padding: 16px;
+  }
+
+  .balance-card h3,
+  .income-card h3,
+  .expense-card h3,
+  .transaction-card h3 {
+    font-size: 15px;
+  }
+
+  .balance-card p,
+  .income-card p,
+  .expense-card p,
+  .transaction-card p {
+    font-size: 22px;
+  }
+
+}
+
+
+
+/* =====================================================
+   STEP 3 - TRANSACTIONS RESPONSIVE
+   ===================================================== */
+
+/* Main Transactions page */
+.transactions-page {
+  width: 100%;
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 30px 25px 50px;
+  box-sizing: border-box;
+}
+
+/* Prevent content overflow */
+.transactions-page,
+.transactions-page * {
+  box-sizing: border-box;
+}
+
+/* Add Expense form */
+.transactions-page .add-expense-form {
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Inputs */
+.transactions-page input,
+.transactions-page select,
+.transactions-page textarea {
+  max-width: 100%;
+}
+
+/* Buttons */
+.transactions-page button {
+  max-width: 100%;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 1024px) {
+
+  .transactions-page {
+    max-width: 100%;
+    padding: 25px 20px 40px;
+  }
+
+  .transactions-page > h2 {
+    font-size: 30px;
+  }
+
+  .transactions-page .add-expense-form {
+    max-width: 100%;
+    padding: 28px;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .transactions-page {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 12px 35px;
+    margin: 0;
+  }
+
+  /* Page title */
+  .transactions-page > h2 {
+    font-size: 25px;
+    margin: 10px 0 22px;
+  }
+
+  /* Add expense card */
+  .transactions-page .add-expense-form {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 15px;
+    margin-bottom: 25px;
+    border-radius: 15px;
+  }
+
+  /* Form title */
+  .transactions-page .add-expense-form h2 {
+    font-size: 21px;
+    margin-bottom: 20px;
+  }
+
+  /* Labels */
+  .transactions-page label {
+    font-size: 14px;
+  }
+
+  /* Inputs */
+  .transactions-page input,
+  .transactions-page select,
+  .transactions-page textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  /* Buttons */
+  .transactions-page button {
+    width: 100%;
+    max-width: 100%;
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  /* Delete all */
+  .transactions-page .clear-all-btn {
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  /* Export */
+  .transactions-page .export-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  /*
+     Transaction list:
+     allow horizontal scrolling if the
+     transaction table is wider than the phone
+  */
+  .transactions-page table {
+    width: 100%;
+    min-width: 650px;
+  }
+
+  .transactions-page table th,
+  .transactions-page table td {
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 10px;
+  }
+
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+   ===================================================== */
+
+@media (max-width: 400px) {
+
+  .transactions-page {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .transactions-page > h2 {
+    font-size: 22px;
+  }
+
+  .transactions-page .add-expense-form {
+    padding: 17px 12px;
+  }
+
+  .transactions-page .add-expense-form h2 {
+    font-size: 19px;
+  }
+
+  .transactions-page input,
+  .transactions-page select,
+  .transactions-page textarea {
+    font-size: 13px;
+    padding: 11px;
+  }
+
+  .transactions-page button {
+    font-size: 13px;
+  }
+
+}
+
+
+/* =====================================================
+   STEP 4 - BUDGET RESPONSIVE
+   ===================================================== */
+
+.budget-page {
+  width: 100%;
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 30px 25px 50px;
+  box-sizing: border-box;
+}
+
+.budget-page * {
+  box-sizing: border-box;
+}
+
+/* Budget cards */
+.budget-page .budget-card,
+.budget-page .budget-input-card,
+.budget-page .budget-progress-card {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Summary cards */
+.budget-page .budget-summary {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* Prevent cards from overflowing */
+.budget-page .budget-summary-card {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Month selector */
+.budget-page .budget-month-select {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Budget input */
+.budget-page .budget-input {
+  max-width: 100%;
+}
+
+/* Progress */
+.budget-page .budget-progress {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 1024px) {
+
+  .budget-page {
+    max-width: 100%;
+    padding: 25px 20px 40px;
+  }
+
+  .budget-page .budget-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .budget-page {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 12px 35px;
+    margin: 0;
+  }
+
+  /* Header */
+  .budget-header {
+    text-align: center;
+  }
+
+  .budget-header h1 {
+    font-size: 26px;
+    line-height: 1.2;
+  }
+
+  .budget-header p {
+    font-size: 14px;
+  }
+
+  /* All budget cards */
+  .budget-page .budget-card,
+  .budget-page .budget-input-card,
+  .budget-page .budget-progress-card {
+    width: 100%;
+    padding: 18px 15px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+  }
+
+  /* Card headings */
+  .budget-page .budget-card h2,
+  .budget-page .budget-card h3,
+  .budget-page .budget-input-card h2,
+  .budget-page .budget-input-card h3 {
+    font-size: 19px;
+    line-height: 1.4;
+  }
+
+  /* Summary becomes one column */
+  .budget-page .budget-summary {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .budget-page .budget-summary-card {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .budget-page .budget-summary-card h3 {
+    font-size: 16px;
+  }
+
+  .budget-page .budget-summary-card strong {
+    font-size: 25px;
+  }
+
+  /* Inputs */
+  .budget-page .budget-input,
+  .budget-page .budget-month-select {
+    width: 100%;
+    max-width: 100%;
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  /* Set budget button */
+  .budget-page .set-budget-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 13px;
+  }
+
+  /* Progress header */
+  .budget-page .budget-progress-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  /* Progress bar */
+  .budget-page .budget-progress {
+    width: 100%;
+    height: 15px;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+   ===================================================== */
+
+@media (max-width: 400px) {
+
+  .budget-page {
+    padding: 15px 8px 30px;
+  }
+
+  .budget-header h1 {
+    font-size: 23px;
+  }
+
+  .budget-page .budget-card,
+  .budget-page .budget-input-card,
+  .budget-page .budget-progress-card {
+    padding: 15px 12px;
+  }
+
+  .budget-page .budget-summary-card {
+    padding: 17px;
+  }
+
+  .budget-page .budget-summary-card strong {
+    font-size: 22px;
+  }
+
+  .budget-page .budget-input,
+  .budget-page .budget-month-select {
+    font-size: 14px;
+    padding: 11px;
+  }
+
+}
+
+
+/* =====================================================
+   STEP 5 - REPORTS & CHARTS RESPONSIVE
+   ===================================================== */
+
+.reports-page {
+  width: 100%;
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 30px 25px 50px;
+  box-sizing: border-box;
+}
+
+.reports-page * {
+  box-sizing: border-box;
+}
+
+/* Page title */
+.reports-page > h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+/* Month filter */
+.reports-page .report-month-filter {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto 30px;
+  box-sizing: border-box;
+}
+
+.reports-page .report-month-filter select {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Summary cards */
+.reports-page .report-summary {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.reports-page .report-summary > * {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Charts */
+.reports-page .chart-container {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.reports-page .chart-container canvas {
+  max-width: 100% !important;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 1024px) {
+
+  .reports-page {
+    max-width: 100%;
+    padding: 25px 20px 40px;
+  }
+
+  .reports-page .report-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .reports-page .chart-container {
+    padding: 20px;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .reports-page {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 12px 35px;
+    margin: 0;
+  }
+
+  /* Title */
+  .reports-page > h2 {
+    font-size: 24px;
+    line-height: 1.3;
+    margin-bottom: 20px;
+  }
+
+  /* Month filter */
+  .reports-page .report-month-filter {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    padding: 15px;
+  }
+
+  .reports-page .report-month-filter label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .reports-page .report-month-filter select {
+    width: 100%;
+    font-size: 14px;
+    padding: 11px;
+  }
+
+  /* Summary cards */
+  .reports-page .report-summary {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .reports-page .report-summary > * {
+    width: 100%;
+  }
+
+  /* Chart cards */
+  .reports-page .chart-container {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 18px;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .reports-page .chart-container h2 {
+    font-size: 18px;
+    line-height: 1.3;
+    margin-bottom: 15px;
+  }
+
+  /*
+     Chart.js canvas must stay inside
+     the phone width.
+  */
+  .reports-page .chart-container canvas {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+   ===================================================== */
+
+@media (max-width: 400px) {
+
+  .reports-page {
+    padding: 15px 8px 30px;
+  }
+
+  .reports-page > h2 {
+    font-size: 21px;
+  }
+
+  .reports-page .report-month-filter {
+    padding: 12px;
+  }
+
+  .reports-page .chart-container {
+    padding: 12px;
+  }
+
+  .reports-page .chart-container h2 {
+    font-size: 16px;
+  }
+
+}
+
+
+/* =====================================================
+   STEP 6 - SETTINGS / PROFILE / SECURITY RESPONSIVE
+   ===================================================== */
+
+/* =========================
+   PROFILE
+   ========================= */
+
+.profile-page {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.profile-page * {
+  box-sizing: border-box;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 100%;
+}
+
+.profile-form {
+  width: 100%;
+}
+
+.profile-form input,
+.profile-form select,
+.profile-form textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+/* =========================
+   SETTINGS
+   ========================= */
+
+.settings-page {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.settings-page * {
+  box-sizing: border-box;
+}
+
+.settings-card {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+/* =========================
+   SECURITY
+   ========================= */
+
+.security-page {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.security-page * {
+  box-sizing: border-box;
+}
+
+.security-card {
+  width: 100%;
+  max-width: 100%;
+}
+
+.security-page input,
+.security-page select,
+.security-page textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 1024px) {
+
+  .profile-page,
+  .settings-page,
+  .security-page {
+    max-width: 100%;
+  }
+
+  .profile-card,
+  .settings-card,
+  .security-card {
+    width: 100%;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  /* -------------------------
+     PROFILE
+     ------------------------- */
+
+  .profile-page {
+    width: 100%;
+    padding: 10px 0 30px;
+  }
+
+  .profile-page h1,
+  .profile-page h2 {
+    font-size: 23px;
+    line-height: 1.3;
+  }
+
+  .profile-card {
+    width: 100%;
+    padding: 18px 15px;
+    border-radius: 15px;
+  }
+
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .profile-form input,
+  .profile-form select,
+  .profile-form textarea {
+    width: 100%;
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .profile-form button {
+    width: 100%;
+    padding: 12px;
+  }
+
+
+  /* -------------------------
+     SETTINGS
+     ------------------------- */
+
+  .settings-page {
+    width: 100%;
+    padding: 10px 0 30px;
+  }
+
+  .settings-page h1,
+  .settings-page h2 {
+    font-size: 23px;
+    line-height: 1.3;
+  }
+
+  .settings-card {
+    width: 100%;
+    padding: 18px 15px;
+    border-radius: 15px;
+  }
+
+  .settings-card input,
+  .settings-card select,
+  .settings-card textarea {
+    width: 100%;
+    max-width: 100%;
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .settings-card button {
+    width: 100%;
+    padding: 12px;
+  }
+
+
+  /* -------------------------
+     SECURITY
+     ------------------------- */
+
+  .security-page {
+    width: 100%;
+    padding: 10px 0 30px;
+  }
+
+  .security-page h1,
+  .security-page h2 {
+    font-size: 23px;
+    line-height: 1.3;
+  }
+
+  .security-card {
+    width: 100%;
+    padding: 18px 15px;
+    border-radius: 15px;
+  }
+
+  .security-page input,
+  .security-page select,
+  .security-page textarea {
+    width: 100%;
+    max-width: 100%;
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .security-page button {
+    width: 100%;
+    padding: 12px;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+   ===================================================== */
+
+@media (max-width: 400px) {
+
+  .profile-page,
+  .settings-page,
+  .security-page {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .profile-card,
+  .settings-card,
+  .security-card {
+    padding: 15px 12px;
+  }
+
+  .profile-page h1,
+  .profile-page h2,
+  .settings-page h1,
+  .settings-page h2,
+  .security-page h1,
+  .security-page h2 {
+    font-size: 21px;
+  }
+
+}
+
+
+/* =====================================================
+   STEP 7 - AUTH PAGES RESPONSIVE
+   LOGIN / REGISTER / OTP / FORGOT PASSWORD / RESET
+   ===================================================== */
+
+/* Common auth container */
+.login-page,
+.register-page,
+.verify-registration-page,
+.forgot-password-page,
+.reset-password-page {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.login-page *,
+.register-page *,
+.verify-registration-page *,
+.forgot-password-page *,
+.reset-password-page * {
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   AUTH CARD
+   ===================================================== */
+
+.login-card,
+.register-card,
+.verify-registration-card,
+.forgot-password-card,
+.reset-password-card {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+
+/* Inputs */
+.login-card input,
+.register-card input,
+.verify-registration-card input,
+.forgot-password-card input,
+.reset-password-card input {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+/* Buttons */
+.login-card button,
+.register-card button,
+.verify-registration-card button,
+.forgot-password-card button,
+.reset-password-card button {
+  max-width: 100%;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+  .login-page,
+  .register-page,
+  .verify-registration-page,
+  .forgot-password-page,
+  .reset-password-page {
+    padding: 25px 20px;
+  }
+
+  .login-card,
+  .register-card,
+  .verify-registration-card,
+  .forgot-password-card,
+  .reset-password-card {
+    max-width: 440px;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .login-page,
+  .register-page,
+  .verify-registration-page,
+  .forgot-password-page,
+  .reset-password-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Cards */
+  .login-card,
+  .register-card,
+  .verify-registration-card,
+  .forgot-password-card,
+  .reset-password-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 25px 18px;
+    margin: 0 auto;
+    border-radius: 18px;
+  }
+
+  /* Headings */
+  .login-card h1,
+  .login-card h2,
+  .register-card h1,
+  .register-card h2,
+  .verify-registration-card h1,
+  .verify-registration-card h2,
+  .forgot-password-card h1,
+  .forgot-password-card h2,
+  .reset-password-card h1,
+  .reset-password-card h2 {
+    font-size: 24px;
+    line-height: 1.3;
+  }
+
+  /* Description */
+  .login-card p,
+  .register-card p,
+  .verify-registration-card p,
+  .forgot-password-card p,
+  .reset-password-card p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Labels */
+  .login-card label,
+  .register-card label,
+  .verify-registration-card label,
+  .forgot-password-card label,
+  .reset-password-card label {
+    font-size: 14px;
+  }
+
+  /* Inputs */
+  .login-card input,
+  .register-card input,
+  .verify-registration-card input,
+  .forgot-password-card input,
+  .reset-password-card input {
+    width: 100%;
+    min-width: 0;
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  /* Buttons */
+  .login-card button,
+  .register-card button,
+  .verify-registration-card button,
+  .forgot-password-card button,
+  .reset-password-card button {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+}
+
+
+/* =====================================================
+   OTP INPUT
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .verify-registration-card input,
+  .forgot-password-card input,
+  .reset-password-card input {
+    text-align: center;
+    letter-spacing: 4px;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+   ===================================================== */
+
+@media (max-width: 400px) {
+
+  .login-page,
+  .register-page,
+  .verify-registration-page,
+  .forgot-password-page,
+  .reset-password-page {
+    padding: 15px 8px;
+  }
+
+  .login-card,
+  .register-card,
+  .verify-registration-card,
+  .forgot-password-card,
+  .reset-password-card {
+    padding: 20px 14px;
+    border-radius: 15px;
+  }
+
+  .login-card h1,
+  .login-card h2,
+  .register-card h1,
+  .register-card h2,
+  .verify-registration-card h1,
+  .verify-registration-card h2,
+  .forgot-password-card h1,
+  .forgot-password-card h2,
+  .reset-password-card h1,
+  .reset-password-card h2 {
+    font-size: 21px;
+  }
+
+  .login-card input,
+  .register-card input,
+  .verify-registration-card input,
+  .forgot-password-card input,
+  .reset-password-card input {
+    font-size: 14px;
+    padding: 11px;
+  }
+
+}

@@ -89,17 +89,75 @@ const handleLogout = () => {
 
   });
 
-
   useEffect(() => {
-
     localStorage.setItem(
       "theme",
       theme
     );
-
   }, [theme]);
 
 
+  // ===============================
+  // AUTO LOGOUT AFTER INACTIVITY
+  // ===============================
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      return;
+    }
+
+    // 30 minutes
+    const INACTIVITY_LIMIT = 10 * 60 * 1000;
+
+    let logoutTimer;
+
+    const logoutUser = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("loggedIn");
+
+      setExpenses([]);
+      setIsLoggedIn(false);
+
+      alert("You have been logged out due to inactivity.");
+    };
+
+    const resetTimer = () => {
+      clearTimeout(logoutTimer);
+
+      logoutTimer = setTimeout(() => {
+        logoutUser();
+      }, INACTIVITY_LIMIT);
+    };
+
+    const activityEvents = [
+      "mousemove",
+      "mousedown",
+      "keydown",
+      "touchstart",
+      "scroll"
+    ];
+
+    activityEvents.forEach((event) => {
+      window.addEventListener(event, resetTimer);
+    });
+
+    // Start the timer
+    resetTimer();
+
+    return () => {
+      clearTimeout(logoutTimer);
+
+      activityEvents.forEach((event) => {
+        window.removeEventListener(event, resetTimer);
+      });
+    };
+  }, [isLoggedIn]);
+
+
+  // =========================
+  // EXPENSES
+  // =========================
 
   // =========================
   // EXPENSES
