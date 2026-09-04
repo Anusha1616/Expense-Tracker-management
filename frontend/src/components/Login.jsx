@@ -178,7 +178,7 @@ setShowRegistrationOTP(true);
     setLoading(true);
 
     const response = await axios.post(
-      "https://expense-tracker-management-backend.vercel.app/api/auth/forgot-password"
+      "https://expense-tracker-management-backend.vercel.app/api/auth/forgot-password",
       {
         email: forgotEmail
       },
