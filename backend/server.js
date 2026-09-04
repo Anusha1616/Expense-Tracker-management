@@ -10,9 +10,8 @@ const budgetRoutes = require("./routes/budgetRoutes");
 
 const app = express();
 
-app.use(cors({
-  origin: "https://expense-tracker-management-two.vercel.app"
-}));
+app.use(cors());
+ 
 app.use(express.json());
 
 app.get("/", (req, res) => {
