@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://expense-tracker-management-sw2z.vercel.app/api"
+  baseURL: "https://expense-tracker-management-backend.vercel.app/api"
 });
 // ===============================
 // ADD JWT TOKEN TO REQUEST
